@@ -1,3 +1,8 @@
+import {AnimalSize} from "../Enums/AnimalSize";
+import {AnimalGender} from "../Enums/AnimalGender";
+import {AnimalSpecies} from "../Enums/AnimalSpecies";
+import {AdoptionStatus} from "../Enums/AdoptionStatus";
+
 export default class AnimalViewModel {
     private baseUrl: string;
 
@@ -10,16 +15,16 @@ export default class AnimalViewModel {
     async addAnimal(
         shelterId: number,
         name: string,
-        species: string,
+        species: AnimalSpecies,
         breed: string,
-        gender: string,
+        gender: AnimalGender,
         age: number,
         weight: number,
-        size: string,
+        size: AnimalSize,
         isHealthy: boolean,
         isVaccinated: boolean,
         isSterilized: boolean,
-        adoptionStatus: string,
+        adoptionStatus: AdoptionStatus,
         arrivalDate: Date,
         description?: string | null,
         photos?: File[] | null,
@@ -39,7 +44,7 @@ export default class AnimalViewModel {
         isHealthy: boolean,
         isVaccinated: boolean,
         isSterilized: boolean,
-        adoptionStatus: string,
+        adoptionStatus: AdoptionStatus,
         description?: string | null,
         photos?: File[] | null,
         documents?: File[] | null

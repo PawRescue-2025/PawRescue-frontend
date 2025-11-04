@@ -1,3 +1,5 @@
+import {VerificationStatus} from "../Enums/VerificationStatus";
+
 export default class VerificationViewModel {
     private baseUrl: string;
 
@@ -21,7 +23,7 @@ export default class VerificationViewModel {
 
     //editVerificationStatus(verificationId, status) -> Verification
     //функція для оновлення статусу верифікації
-    async editVerificationStatus(verificationId: number, status: string): Promise<any> {
+    async editVerificationStatus(verificationId: number, status: VerificationStatus): Promise<any> {
         // TODO: реалізація запиту
         throw new Error("Not implemented");
     }

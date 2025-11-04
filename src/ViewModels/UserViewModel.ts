@@ -1,3 +1,5 @@
+import {ActivityStatus} from "../Enums/ActivityStatus";
+
 export default class UserViewModel {
     private baseUrl: string;
 
@@ -32,7 +34,7 @@ export default class UserViewModel {
 
     //editUserStatus(userId, status) -> User
     //функція для редагування статусу (модератор)
-    async editUserStatus(userId: string, status: string): Promise<any> {
+    async editUserStatus(userId: string, status: ActivityStatus): Promise<any> {
         // TODO: реалізація запиту
         throw new Error("Not implemented");
     }

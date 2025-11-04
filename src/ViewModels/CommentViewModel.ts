@@ -1,3 +1,5 @@
+import {ActivityStatus} from "../Enums/ActivityStatus";
+
 export default class CommentViewModel {
     private baseUrl: string;
 
@@ -17,7 +19,7 @@ export default class CommentViewModel {
 
     //editCommentStatus(commentId, status) -> Comment
     //функція для редагування статусу коментаря (модератор)
-    async editCommentStatus(commentId: number, status: string): Promise<any> {
+    async editCommentStatus(commentId: number, status: ActivityStatus): Promise<any> {
         // TODO: реалізація запиту
         throw new Error("Not implemented");
     }

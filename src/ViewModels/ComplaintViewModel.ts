@@ -1,3 +1,5 @@
+import {ComplaintCategory} from "../Enums/ComplaintCategory";
+
 export default class ComplaintViewModel {
     private baseUrl: string;
 
@@ -12,7 +14,7 @@ export default class ComplaintViewModel {
     // - одне з userId, postId або commentId має бути обов’язково (перевірка на фронті)
     async addComplaint(
         complainantId: string,
-        category: string,
+        category: ComplaintCategory,
         userId?: string | null,
         postId?: number | null,
         commentId?: number | null,

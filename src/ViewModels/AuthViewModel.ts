@@ -1,3 +1,5 @@
+import {UserType} from "../Enums/UserType";
+
 export default class AuthViewModel {
     private baseUrl: string;
 
@@ -49,7 +51,7 @@ export default class AuthViewModel {
         password: string,
         fullName: string,
         phoneNumber: string,
-        userType: string,
+        userType: UserType,
         documents: File[],
         photo?: File | null,
         description?: string | null

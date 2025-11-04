@@ -1,3 +1,6 @@
+import {PostType} from "../Enums/PostType";
+import {ActivityStatus} from "../Enums/ActivityStatus";
+
 export default class PostViewModel {
     private baseUrl: string;
 
@@ -14,7 +17,7 @@ export default class PostViewModel {
     // - deletionDate = NULL
     async addPost(
         userId: string,
-        postType: string,
+        postType: PostType,
         title: string,
         content: string,
         photos?: File[] | null,
@@ -53,7 +56,7 @@ export default class PostViewModel {
 
     //editPostStatus(postId, status) -> Post
     //функція для зміни статусу (модератор)
-    async editPostStatus(postId: number, status: string): Promise<any> {
+    async editPostStatus(postId: number, status: ActivityStatus): Promise<any> {
         // TODO: реалізація запиту
         throw new Error("Not implemented");
     }
