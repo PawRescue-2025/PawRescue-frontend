@@ -11,17 +11,18 @@ export default class AuthViewModel extends BaseViewModel {
     //функція для логіну користувачів
     // - логінитись можуть лише користувачі з status = active
     async logIn(email: string, password: string): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { email, password };
+        const data = await this.post(body, "/login");
+        localStorage.setItem("token", data.accessToken);
+        return data;
     }
 
     //logout(userId)
     //функція для виходу з акаунта
     async logout(userId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        localStorage.removeItem("token");
     }
-    
+
     //signUpUnverified(email, password, fullName, photo (O), description (O), phoneNumber)
     //функція для реєстрації користувача типу caring
     // - userType = caring
