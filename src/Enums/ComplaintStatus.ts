@@ -1,5 +1,5 @@
 export enum ComplaintStatus {
-    New = 1,
-    Processed = 2,
-    Declined = 3,
+    New = 0,
+    Processed = 1,
+    Declined = 2,
 }

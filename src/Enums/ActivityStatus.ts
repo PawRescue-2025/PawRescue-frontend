@@ -1,5 +1,5 @@
 export enum ActivityStatus {
-    Active = 1,
-    Blocked = 2,
-    Deleted = 3
+    Active = 0,
+    Blocked = 1,
+    Deleted = 2
 }

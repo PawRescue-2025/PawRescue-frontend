@@ -1,6 +1,6 @@
 export enum UserType {
-    Caring = 1,
-    ShelterOwner = 2,
-    Volunteer = 3,
-    Moderator = 4
+    Caring = 0,
+    ShelterOwner = 1,
+    Volunteer = 2,
+    Moderator = 3
 }

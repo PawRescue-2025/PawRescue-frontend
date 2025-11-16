@@ -38,7 +38,7 @@ const TestPage: React.FC = () => {
 
     // Тестові дані
     const testData = {
-        email: "admin@test.com",
+        email: "admin2@test.com",
         password: "Testtest0!",
         fullName: "Test User",
         phoneNumber: "+380501234567",

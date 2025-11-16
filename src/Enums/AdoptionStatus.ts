@@ -1,6 +1,6 @@
 export enum AdoptionStatus {
-    NotAvailableForAdoption = 1,
-    AvailableForAdoption = 2,
-    CurrentlyFostered = 3,
-    Adopted = 4
+    NotAvailableForAdoption = 0,
+    AvailableForAdoption = 1,
+    CurrentlyFostered = 2,
+    Adopted = 3
 }
