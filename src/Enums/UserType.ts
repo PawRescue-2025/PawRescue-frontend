@@ -1,6 +1,6 @@
 export enum UserType {
-    Caring = "Небайдужий",
-    ShelterOwner = "Власник притулку",
-    Volunteer = "Волонтер",
-    Moderator = "Модератор"
+    Caring = 1,
+    ShelterOwner = 2,
+    Volunteer = 3,
+    Moderator = 4
 }

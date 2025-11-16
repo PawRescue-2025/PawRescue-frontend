@@ -15,26 +15,27 @@ export default class ShelterViewModel extends BaseViewModel {
         name: string,
         description: string,
         location: string,
-        contactPhone?: string | null,
-        contactEmail?: string | null,
-        contactLink?: string | null
+        contactPhone: string = "",
+        contactEmail: string = "",
+        contactLink: string = ""
     ): Promise<any> {
-        const body = { ownerId, name, description, location };
+        const body = { ownerId, name, description, location, contactPhone, contactEmail, contactLink };
         return await this.post(body);
     }
 
     //editShelter(name, description, contactPhone (O), contactEmail (O), contactLink (O), location) -> Shelter
     //функція для редагування притулку
     async editShelter(
-        shelterId: number,
+        id: number,
         name: string,
         description: string,
-        location?: string,
-        contactPhone?: string | null,
-        contactEmail?: string | null,
-        contactLink?: string | null
+        location: string,
+        contactPhone: string = "",
+        contactEmail: string = "",
+        contactLink: string = ""
     ): Promise<any> {
-        const body = { shelterId, name, description, location };
+        // this is not PATCH, it's full update
+        const body = { id, name, description, location, contactPhone, contactEmail, contactLink };
         return await this.put(body);
     }
 

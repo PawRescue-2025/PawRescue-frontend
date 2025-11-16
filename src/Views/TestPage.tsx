@@ -20,6 +20,7 @@ import { ActivityStatus } from "../Enums/ActivityStatus";
 import { ComplaintCategory } from "../Enums/ComplaintCategory";
 import { PostType } from "../Enums/PostType";
 import { VerificationStatus } from "../Enums/VerificationStatus";
+import { ComplaintStatus } from "../Enums/ComplaintStatus";
 
 const TestPage: React.FC = () => {
     const animalVM = new AnimalViewModel();
@@ -43,15 +44,19 @@ const TestPage: React.FC = () => {
         phoneNumber: "+380501234567",
         userId: "614bc804-7897-4278-9fff-64d98ef605b7",
         shelterId: 1,
-        animalId: 1,
-        postId: 1,
+        animalId: 5,
+        postId: 4,
         commentId: 1,
         complaintId: 1,
         pointsId: 1,
         reportId: 1,
         resourceId: 1,
         linkId: 1,
-        verificationId: 1
+        verificationId: 1,
+        contactPhone: "+380501112233",
+        contactEmail: "test@example.com",
+        contactLink: "http://example.com"
+
     };
 
     const handleTest = async (name: string, fn: () => Promise<any>) => {
@@ -95,11 +100,11 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>🐶 AnimalViewModel</h2>
                 <button onClick={() => handleTest("AnimalViewModel.addAnimal", () => 
-                    animalVM.addAnimal(testData.shelterId, "Rex", AnimalSpecies.Dog, "Labrador", AnimalGender.Male, 3, 25, AnimalSize.Medium, true, true, false, AdoptionStatus.AvailableForAdoption, new Date())
+                    animalVM.addAnimal(testData.shelterId, "Rex", AnimalSpecies.Dog, "Labrador", AnimalGender.Male, 3, 25, AnimalSize.Medium, true, true, false, AdoptionStatus.AvailableForAdoption, new Date(), "Friendly dog", [] , [])
                 )}>Test addAnimal</button>
                 
                 <button onClick={() => handleTest("AnimalViewModel.editAnimal", () => 
-                    animalVM.editAnimal(testData.animalId, "Rex Updated", 4, 26, true, true, true, AdoptionStatus.Adopted)
+                    animalVM.editAnimal(testData.animalId, testData.shelterId, "Rex Updated", AnimalSpecies.Dog, "Labrador", AnimalGender.Male, 4, 26, AnimalSize.Medium, true, true, true, AdoptionStatus.Adopted, new Date(), "Updated friendly dog", [], [])
                 )}>Test editAnimal</button>
                 
                 <button onClick={() => handleTest("AnimalViewModel.deleteAnimal", () => 
@@ -147,7 +152,7 @@ const TestPage: React.FC = () => {
                 )}>Test addComplaint</button>
                 
                 <button onClick={() => handleTest("ComplaintViewModel.editComplaintStatus", () => 
-                    complaintVM.editComplaintStatus(testData.complaintId, "1")
+                    complaintVM.editComplaintStatus(testData.complaintId, ComplaintStatus.Processed)
                 )}>Test editComplaintStatus</button>
                 
                 <button onClick={() => handleTest("ComplaintViewModel.deleteComplaint", () => 
@@ -167,7 +172,7 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>⭐ PointsViewModel</h2>
                 <button onClick={() => handleTest("PointsViewModel.addPoints", () => 
-                    pointsVM.addPoints(testData.userId, "reviewer-id", 8, "Great work!")
+                    pointsVM.addPoints(testData.userId, testData.userId, 8, "Great work!")
                 )}>Test addPoints</button>
                 
                 <button onClick={() => handleTest("PointsViewModel.deletePoints", () => 
@@ -195,11 +200,11 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>📝 PostViewModel</h2>
                 <button onClick={() => handleTest("PostViewModel.addPost", () => 
-                    postVM.addPost(testData.userId, PostType.Story, "Test Post", "This is test content", null, new Date(), null, null, null, "Kyiv")
+                    postVM.addPost(testData.userId, PostType.Story, "Test Post", "This is test content", [], new Date(), "", "", "", "Kyiv")
                 )}>Test addPost</button>
                 
                 <button onClick={() => handleTest("PostViewModel.editPost", () => 
-                    postVM.editPost(testData.postId, "Updated content", new Date(), null, null, null, "Lviv")
+                    postVM.editPost(testData.postId, "Updated content", new Date(), "", "", "", "Lviv")
                 )}>Test editPost</button>
                 
                 <button onClick={() => handleTest("PostViewModel.editHelpRequestStatus", () => 
@@ -275,7 +280,7 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>🏠 ShelterViewModel</h2>
                 <button onClick={() => handleTest("ShelterViewModel.addShelter", () => 
-                    shelterVM.addShelter(testData.userId, "Happy Paws Shelter", "A shelter for dogs", "Kyiv, Ukraine")
+                    shelterVM.addShelter(testData.userId, "Happy Paws Shelter", "A shelter for dogs", "Kyiv, Ukraine", testData.contactPhone, testData.contactEmail, testData.contactLink)
                 )}>Test addShelter</button>
                 
                 <button onClick={() => handleTest("ShelterViewModel.editShelter", () => 

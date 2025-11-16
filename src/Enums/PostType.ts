@@ -1,12 +1,12 @@
 export enum PostType {
-    Lost = "Загублені",
-    Found = "Знайдені",
-    FinancialHelp = "Фінансова допомога",
-    MaterialHelp = "Речова допомога",
-    VolunteerHelp = "Волонтерська допомога",
-    Adoption = "Адопція",
-    Fostering = "Перетримка",
-    Useful = "Корисне",
-    Story = "Історії",
-    Event = "Захід"
+    Lost = 1,
+    Found = 2,
+    FinancialHelp = 3,
+    MaterialHelp = 4,
+    VolunteerHelp = 5,
+    Adoption = 6,
+    Fostering = 7,
+    Useful = 8,
+    Story = 9,
+    Event = 10
 }

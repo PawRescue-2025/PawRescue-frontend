@@ -1,6 +1,6 @@
 export enum VerificationStatus {
-    NotVerified = "Очікує документи",
-    Pending = "Очікує підтвердження",
-    Verified = "Верифіковано",
-    Declined = "Не верифіковано"
+    NotVerified = 1,
+    Pending = 2,
+    Verified = 3,
+    Declined = 4
 }

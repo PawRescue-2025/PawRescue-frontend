@@ -1,6 +1,6 @@
 export enum AdoptionStatus {
-    NotAvailableForAdoption = "Не доступний до адопції",
-    AvailableForAdoption = "Доступний до адопції",
-    CurrentlyFostered = "На перетримці",
-    Adopted = "Усиновлено"
+    NotAvailableForAdoption = 1,
+    AvailableForAdoption = 2,
+    CurrentlyFostered = 3,
+    Adopted = 4
 }

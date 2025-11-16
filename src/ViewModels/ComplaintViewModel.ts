@@ -1,19 +1,20 @@
 import { ComplaintCategory } from "../Enums/ComplaintCategory";
 import BaseViewModel from "./BaseViewModel";
 import { API_ENDPOINTS } from "../config/constants";
+import { ComplaintStatus } from "../Enums/ComplaintStatus";
 
 export default class ComplaintViewModel extends BaseViewModel {
     constructor() {
         super(API_ENDPOINTS.COMPLAINT);
     }
-    
+
     //addComplaint(complainantId, userId (O), postId (O), commentId (O), category, description (O)) -> Complaint
     //функція створення скарги
     // - creationDate = NOW
     // - status = active
     // - одне з userId, postId або commentId має бути обов'язково (перевірка на фронті)
     async addComplaint(
-        complainantId: string,
+        id: string,
         category: ComplaintCategory,
         userId?: string | null,
         postId?: number | null,
@@ -21,7 +22,7 @@ export default class ComplaintViewModel extends BaseViewModel {
         description?: string | null
     ): Promise<any> {
         const body = {
-            complainantId,
+            id,
             userId,
             postId,
             commentId,
@@ -33,7 +34,7 @@ export default class ComplaintViewModel extends BaseViewModel {
 
     //editComplaintStatus(complaintId, status) -> Complaint
     //функція редагування статусу (модератор)
-    async editComplaintStatus(complaintId: number, status: string): Promise<any> {
+    async editComplaintStatus(complaintId: number, status: ComplaintStatus): Promise<any> {
         const body = { id: complaintId, status };
         return await this.patch(body);
     }

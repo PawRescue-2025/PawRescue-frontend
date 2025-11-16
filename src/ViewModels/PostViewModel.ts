@@ -20,12 +20,12 @@ export default class PostViewModel extends BaseViewModel {
         postType: PostType,
         title: string,
         content: string,
-        photos?: File[] | null,
-        eventDate?: Date,
-        contactPhone?: string | null,
-        contactEmail?: string | null,
-        contactLink?: string | null,
-        location?: string | null
+        photos: File[] = [],
+        eventDate: Date = new Date(),
+        contactPhone: string = "",
+        contactEmail: string = "",
+        contactLink: string = "",
+        location: string = "",
     ): Promise<any> {
         const body = {
             userId,
@@ -35,7 +35,7 @@ export default class PostViewModel extends BaseViewModel {
             content,
             status: 0, // EntityStatus.Active
             location,
-            photos: null // TODO: обробка файлів
+            photos
         };
         return await this.post(body);
     }

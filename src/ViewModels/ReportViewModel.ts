@@ -12,14 +12,14 @@ export default class ReportViewModel extends BaseViewModel {
     async addReport(
         postId: number,
         text?: string | null,
-        photos?: File[] | null,
-        documents?: File[] | null
+        photos: File[] | null = [],
+        documents: File[] | null = []
     ): Promise<any> {
         const body = {
             postId,
             text,
-            photos: null, // TODO: обробка файлів
-            documents: null // TODO: обробка файлів
+            photos, // TODO: обробка файлів
+            documents // TODO: обробка файлів
         };
         return await this.post(body);
     }

@@ -26,9 +26,9 @@ export default class AnimalViewModel extends BaseViewModel {
         isSterilized: boolean,
         adoptionStatus: AdoptionStatus,
         arrivalDate: Date,
-        description?: string | null,
-        photos?: File[] | null,
-        documents?: File[] | null
+        description: string,
+        photos: File[] = [],
+        documents: File[] = []
     ): Promise<any> {
         const body = {
             shelterId,
@@ -40,8 +40,8 @@ export default class AnimalViewModel extends BaseViewModel {
             weight,
             size,
             description,
-            photos: null, // TODO: обробка файлів
-            documents: null, // TODO: обробка файлів
+            photos: photos,
+            documents: documents,
             isHealthy,
             isVaccinated,
             isSterilized,
@@ -54,25 +54,36 @@ export default class AnimalViewModel extends BaseViewModel {
     //функція редагування даних про тваринку
     async editAnimal(
         animalId: number,
+         shelterId: number,
         name: string,
+        species: AnimalSpecies,
+        breed: string,
+        gender: AnimalGender,
         age: number,
         weight: number,
+        size: AnimalSize,
         isHealthy: boolean,
         isVaccinated: boolean,
         isSterilized: boolean,
         adoptionStatus: AdoptionStatus,
-        description?: string | null,
-        photos?: File[] | null,
-        documents?: File[] | null
+        arrivalDate: Date,
+        description: string,
+        photos: File[] = [],
+        documents: File[] = []
     ): Promise<any> {
         const body = {
-            id: animalId,
+            animalId,
+            shelterId,
             name,
+            species,
+            breed,
+            gender,
             age,
             weight,
+            size,
             description,
-            photos: null, // TODO: обробка файлів
-            documents: null, // TODO: обробка файлів
+            photos: photos,
+            documents: documents,
             isHealthy,
             isVaccinated,
             isSterilized,
