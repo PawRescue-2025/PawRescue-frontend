@@ -1,8 +1,9 @@
-export default class PointsViewModel {
-    private baseUrl: string;
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class PointsViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.POINTS);
     }
 
     //addPoints(recipientId, reviewerId, points, comment) -> Points

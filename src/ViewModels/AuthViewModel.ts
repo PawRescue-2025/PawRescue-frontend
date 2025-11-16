@@ -1,10 +1,10 @@
-import {UserType} from "../Enums/UserType";
+import { UserType } from "../Enums/UserType";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class AuthViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class AuthViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.AUTH);
     }
 
     //logIn(email, password) -> User

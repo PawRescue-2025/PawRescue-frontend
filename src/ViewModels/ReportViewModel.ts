@@ -1,8 +1,9 @@
-export default class ReportViewModel {
-    private baseUrl: string;
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class ReportViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.REPORT);
     }
 
     //addReport(postId, text (O), photos [File] (O), documents [File] (O)) -> Report

@@ -1,10 +1,10 @@
-import {ComplaintCategory} from "../Enums/ComplaintCategory";
+import { ComplaintCategory } from "../Enums/ComplaintCategory";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class ComplaintViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class ComplaintViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.COMPLAINT);
     }
 
     //addComplaint(complainantId, userId (O), postId (O), commentId (O), category, description (O)) -> Complaint

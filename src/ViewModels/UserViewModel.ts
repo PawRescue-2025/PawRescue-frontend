@@ -1,10 +1,10 @@
-import {ActivityStatus} from "../Enums/ActivityStatus";
+import { ActivityStatus } from "../Enums/ActivityStatus";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class UserViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class UserViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.USER);
     }
 
     //editUser(userId, email, password, fullName, photo (O), description (O), phoneNumber) -> User

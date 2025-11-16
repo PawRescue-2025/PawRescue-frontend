@@ -1,8 +1,9 @@
-export default class ResourcesViewModel {
-    private baseUrl: string;
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class ResourcesViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.RESOURCES);
     }
 
     //addResource(shelterId, category, name, description, isPresent) -> Resource

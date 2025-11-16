@@ -1,10 +1,10 @@
-import {VerificationStatus} from "../Enums/VerificationStatus";
+import { VerificationStatus } from "../Enums/VerificationStatus";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class VerificationViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class VerificationViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.VERIFICATION);
     }
 
     //getAllVerifications() -> [Verification]

@@ -1,8 +1,9 @@
-export default class ShelterViewModel {
-    private baseUrl: string;
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class ShelterViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.SHELTER);
     }
 
     //addShelter(ownerId, name, description, contactPhone (O), contactEmail (O), contactLink (O), location)

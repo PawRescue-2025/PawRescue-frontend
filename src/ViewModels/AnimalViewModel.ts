@@ -1,13 +1,13 @@
-import {AnimalSize} from "../Enums/AnimalSize";
-import {AnimalGender} from "../Enums/AnimalGender";
-import {AnimalSpecies} from "../Enums/AnimalSpecies";
-import {AdoptionStatus} from "../Enums/AdoptionStatus";
+import { AnimalSize } from "../Enums/AnimalSize";
+import { AnimalGender } from "../Enums/AnimalGender";
+import { AnimalSpecies } from "../Enums/AnimalSpecies";
+import { AdoptionStatus } from "../Enums/AdoptionStatus";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class AnimalViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class AnimalViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.ANIMAL);
     }
 
     //addAnimal(shelterId, name, species, breed, gender, age, weight, size, description (O), photos (O) [Files], documents (O) [Files], isHealthy, isVaccinated, isSterilized, adoptionStatus, arrivalDate) -> Animal

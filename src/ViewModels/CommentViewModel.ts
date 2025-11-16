@@ -1,10 +1,10 @@
-import {ActivityStatus} from "../Enums/ActivityStatus";
+import { ActivityStatus } from "../Enums/ActivityStatus";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class CommentViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class CommentViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.COMMENT);
     }
 
     //addComment(postId, authorId, content) -> Comment

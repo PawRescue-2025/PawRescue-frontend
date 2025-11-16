@@ -1,11 +1,11 @@
-import {PostType} from "../Enums/PostType";
-import {ActivityStatus} from "../Enums/ActivityStatus";
+import { PostType } from "../Enums/PostType";
+import { ActivityStatus } from "../Enums/ActivityStatus";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class PostViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class PostViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.POST);
     }
 
     //addPost(userId, postType, eventDate (O), title, content, photos [File] (O), contactPhone (O), contactEmail (O), contactLink (O), location (O)) -> Post
