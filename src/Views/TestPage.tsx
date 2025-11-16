@@ -38,8 +38,8 @@ const TestPage: React.FC = () => {
 
     // Тестові дані
     const testData = {
-        email: "test@test.com",
-        password: "Qwerty123!",
+        email: "admin@test.com",
+        password: "Testtest0!",
         fullName: "Test User",
         phoneNumber: "+380501234567",
         userId: "614bc804-7897-4278-9fff-64d98ef605b7",
@@ -328,7 +328,7 @@ const TestPage: React.FC = () => {
                 )}>Test deleteUser</button>
                 
                 <button onClick={() => handleTest("UserViewModel.editUserStatus", () => 
-                    userVM.editUserStatus(testData.userId, ActivityStatus.Deleted)
+                    userVM.editUserStatus(testData.userId, ActivityStatus.Active)
                 )}>Test editUserStatus</button>
                 
                 <button onClick={() => handleTest("UserViewModel.getUserById", () => 
