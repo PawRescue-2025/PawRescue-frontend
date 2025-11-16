@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://pawrescue-wa-fjaxfdawh9hdgsg8.westeurope-01.azurewebsites.net";
+export const API_BASE_URL = "https://pawrescue-wa-2-dfa4ewcdejandkb2.westeurope-01.azurewebsites.net";
 
 export const API_ENDPOINTS = {
     ANIMAL: "/api/Animal",
