@@ -1,5 +1,5 @@
 export enum AnimalSize {
-    Small = "Маленький",
-    Medium = "Середній",
-    Large = "Великий"
+    Small = 1,
+    Medium = 2,
+    Large = 3
 }

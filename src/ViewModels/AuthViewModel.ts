@@ -1,25 +1,26 @@
-import {UserType} from "../Enums/UserType";
+import { UserType } from "../Enums/UserType";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class AuthViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class AuthViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.AUTH);
     }
 
     //logIn(email, password) -> User
     //функція для логіну користувачів
     // - логінитись можуть лише користувачі з status = active
     async logIn(email: string, password: string): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { email, password };
+        const data = await this.post(body, "/login");
+        localStorage.setItem("token", data.accessToken);
+        return data;
     }
 
     //logout(userId)
     //функція для виходу з акаунта
     async logout(userId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        localStorage.removeItem("token");
     }
 
     //signUpUnverified(email, password, fullName, photo (O), description (O), phoneNumber)
@@ -36,8 +37,17 @@ export default class AuthViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            userName: email,
+            email,
+            password,
+            fullName,
+            phoneNumber,
+            description: description || null,
+            photo: null, // TODO: обробка файлів
+            role: 0 // UserRole.Caring
+        };
+        return await this.post(body, "/register");
     }
 
     //signUpVerified(email, password, fullName, photo (O), description (O), phoneNumber, userType, documents [File])
@@ -45,7 +55,7 @@ export default class AuthViewModel {
     // - status = active
     // - deletionDate = NULL
     // - registrationDate = NOW (на рівні БД чи бекенду)
-    // * під час реєстрації створюється об’єкт Verification, прив’язаний до користувача, зі status = notVerified
+    // * під час реєстрації створюється об'єкт Verification, прив'язаний до користувача, зі status = notVerified
     async signUpVerified(
         email: string,
         password: string,
@@ -56,7 +66,17 @@ export default class AuthViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            userName: email,
+            email,
+            password,
+            fullName,
+            phoneNumber,
+            description: description || null,
+            photo: null, // TODO: обробка файлів
+            role: userType // 1 = Volunteer, 2 = ShelterOwner
+        };
+        // TODO: documents - створити Verification після реєстрації
+        return await this.post(body, "/register");
     }
 }

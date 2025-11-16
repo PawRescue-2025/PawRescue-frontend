@@ -1,54 +1,59 @@
-import {ComplaintCategory} from "../Enums/ComplaintCategory";
+import { ComplaintCategory } from "../Enums/ComplaintCategory";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
+import { ComplaintStatus } from "../Enums/ComplaintStatus";
 
-export default class ComplaintViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class ComplaintViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.COMPLAINT);
     }
 
     //addComplaint(complainantId, userId (O), postId (O), commentId (O), category, description (O)) -> Complaint
     //функція створення скарги
     // - creationDate = NOW
     // - status = active
-    // - одне з userId, postId або commentId має бути обов’язково (перевірка на фронті)
+    // - одне з userId, postId або commentId має бути обов'язково (перевірка на фронті)
     async addComplaint(
-        complainantId: string,
+        id: string,
         category: ComplaintCategory,
         userId?: string | null,
         postId?: number | null,
         commentId?: number | null,
         description?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            id,
+            userId,
+            postId,
+            commentId,
+            category,
+            description
+        };
+        return await this.post(body);
     }
 
     //editComplaintStatus(complaintId, status) -> Complaint
     //функція редагування статусу (модератор)
-    async editComplaintStatus(complaintId: number, status: string): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+    async editComplaintStatus(complaintId: number, status: ComplaintStatus): Promise<any> {
+        const body = { id: complaintId, status };
+        return await this.patch(body);
     }
 
     //deleteComplaint(complaintId)
     //функція видалення скарги
     async deleteComplaint(complaintId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.delete(`/${complaintId}`);
     }
 
     //getAllComplaints() -> [Complaint]
     //функція повертає усі скарги (для модератора)
     async getAllComplaints(): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get();
     }
 
     //getComplaintById(complaintId) -> Complaint
     //функція повертає дані про скаргу
     async getComplaintById(complaintId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${complaintId}`);
     }
 }

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UsefulLinkViewModel from "../ViewModels/UsefulLinkViewModel";
 
-const apiBaseUrl = "https://pawrescue-wa-fjaxfdawh9hdgsg8.westeurope-01.azurewebsites.net";
-const linkVM = new UsefulLinkViewModel(`${apiBaseUrl}/api/UsefulLink`);
+const linkVM = new UsefulLinkViewModel();
 
 interface UsefulLink {
     id: number;

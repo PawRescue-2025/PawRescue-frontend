@@ -1,11 +1,11 @@
-import {PostType} from "../Enums/PostType";
-import {ActivityStatus} from "../Enums/ActivityStatus";
+import { PostType } from "../Enums/PostType";
+import { ActivityStatus } from "../Enums/ActivityStatus";
+import BaseViewModel from "./BaseViewModel";
+import { API_ENDPOINTS } from "../config/constants";
 
-export default class PostViewModel {
-    private baseUrl: string;
-
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+export default class PostViewModel extends BaseViewModel {
+    constructor() {
+        super(API_ENDPOINTS.POST);
     }
 
     //addPost(userId, postType, eventDate (O), title, content, photos [File] (O), contactPhone (O), contactEmail (O), contactLink (O), location (O)) -> Post
@@ -20,15 +20,24 @@ export default class PostViewModel {
         postType: PostType,
         title: string,
         content: string,
-        photos?: File[] | null,
-        eventDate?: Date,
-        contactPhone?: string | null,
-        contactEmail?: string | null,
-        contactLink?: string | null,
-        location?: string | null
+        photos: File[] = [],
+        eventDate: Date = new Date(),
+        contactPhone: string = "",
+        contactEmail: string = "",
+        contactLink: string = "",
+        location: string = "",
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            userId,
+            postType,
+            eventDate,
+            title,
+            content,
+            status: 0, // EntityStatus.Active
+            location,
+            photos
+        };
+        return await this.post(body);
     }
 
     //editPost(postId, eventDate (O), content, contactPhone (O), contactEmail (O), contactLink (O), location (O)) -> Post
@@ -42,23 +51,22 @@ export default class PostViewModel {
         contactLink?: string | null,
         location?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { id: postId, eventDate, content, location };
+        return await this.put(body);
     }
 
     //editHelpRequestStatus(postId) -> Post
     //функція для зміни статусу виконання постів з типом допомога (користувачем)
     //toggle isHelpRequestCompleted
     async editHelpRequestStatus(postId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.patch(undefined, `/${postId}`);
     }
 
     //editPostStatus(postId, status) -> Post
     //функція для зміни статусу (модератор)
     async editPostStatus(postId: number, status: ActivityStatus): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { id: postId, status };
+        return await this.patch(body);
     }
 
     //deletePost(postId)
@@ -66,29 +74,26 @@ export default class PostViewModel {
     // - при видаленні викликаємо editPostStatus(postId, status=deleted)
     // - deletionDate = NOW
     async deletePost(postId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.delete(`/${postId}`);
     }
 
     //getAllPosts() -> [Post]
     //функція повертає найновіші «усі» active пости
     // * реалізувати пагінацію, щоб не вивантажувати 100-500 постів за раз
     async getAllPosts(page: number = 1, limit: number = 30): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        // TODO: пагінація не реалізована в Swagger
+        return await this.get();
     }
 
     //getPostById(postId) -> Post
     //функція, що повертає пост за id
     async getPostById(postId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${postId}`);
     }
 
     //getPostsByUser(userId) -> [Post]
     //функція, що повертає всі пости користувача зі статусом Active
     async getPostsByUser(userId: string): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/user/${userId}`);
     }
 }
