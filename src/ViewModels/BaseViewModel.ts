@@ -15,6 +15,8 @@ export default class BaseViewModel {
     ): Promise<any> {
         const options: RequestInit = {
             method,
+            mode: 'cors',
+            credentials: 'include',
             headers: isFormData ? {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`
             } : {
@@ -61,6 +63,13 @@ export default class BaseViewModel {
      */
     protected async put(body: any, path: string = "", isFormData: boolean = false): Promise<any> {
         return this.request(`${this.baseUrl}${path}`, "PUT", body, isFormData);
+    }
+
+    /**
+     * PATCH запит
+     */
+    protected async patch(body?: any, path: string = ""): Promise<any> {
+        return this.request(`${this.baseUrl}${path}`, "PATCH", body);
     }
 
     /**

@@ -6,25 +6,22 @@ export default class VerificationViewModel extends BaseViewModel {
     constructor() {
         super(API_ENDPOINTS.VERIFICATION);
     }
-
     //getAllVerifications() -> [Verification]
     //функція повертає усі запити на верифікацію
     async getAllVerifications(): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get();
     }
 
     //getVerificationById(verificationId) -> Verification
     //функція повертає дані про запит на верифікацію
     async getVerificationById(verificationId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${verificationId}`);
     }
 
     //editVerificationStatus(verificationId, status) -> Verification
     //функція для оновлення статусу верифікації
     async editVerificationStatus(verificationId: number, status: VerificationStatus): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { id: verificationId, status };
+        return await this.patch(body);
     }
 }

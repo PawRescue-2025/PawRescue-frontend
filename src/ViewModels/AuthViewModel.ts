@@ -21,7 +21,7 @@ export default class AuthViewModel extends BaseViewModel {
         // TODO: реалізація запиту
         throw new Error("Not implemented");
     }
-
+    
     //signUpUnverified(email, password, fullName, photo (O), description (O), phoneNumber)
     //функція для реєстрації користувача типу caring
     // - userType = caring
@@ -36,8 +36,17 @@ export default class AuthViewModel extends BaseViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            userName: email,
+            email,
+            password,
+            fullName,
+            phoneNumber,
+            description: description || null,
+            photo: null, // TODO: обробка файлів
+            role: 0 // UserRole.Caring
+        };
+        return await this.post(body, "/register");
     }
 
     //signUpVerified(email, password, fullName, photo (O), description (O), phoneNumber, userType, documents [File])
@@ -45,7 +54,7 @@ export default class AuthViewModel extends BaseViewModel {
     // - status = active
     // - deletionDate = NULL
     // - registrationDate = NOW (на рівні БД чи бекенду)
-    // * під час реєстрації створюється об’єкт Verification, прив’язаний до користувача, зі status = notVerified
+    // * під час реєстрації створюється об'єкт Verification, прив'язаний до користувача, зі status = notVerified
     async signUpVerified(
         email: string,
         password: string,
@@ -56,7 +65,17 @@ export default class AuthViewModel extends BaseViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            userName: email,
+            email,
+            password,
+            fullName,
+            phoneNumber,
+            description: description || null,
+            photo: null, // TODO: обробка файлів
+            role: userType // 1 = Volunteer, 2 = ShelterOwner
+        };
+        // TODO: documents - створити Verification після реєстрації
+        return await this.post(body, "/register");
     }
 }

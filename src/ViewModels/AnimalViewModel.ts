@@ -30,8 +30,24 @@ export default class AnimalViewModel extends BaseViewModel {
         photos?: File[] | null,
         documents?: File[] | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            shelterId,
+            name,
+            species,
+            breed,
+            gender,
+            age,
+            weight,
+            size,
+            description,
+            photos: null, // TODO: обробка файлів
+            documents: null, // TODO: обробка файлів
+            isHealthy,
+            isVaccinated,
+            isSterilized,
+            adoptionStatus
+        };
+        return await this.post(body);
     }
 
     //editAnimal(animalId, name, age, weight, description (O), photos (O) [Files], documents (O) [Files], isHealthy, isVaccinated, isSterilized, adoptionStatus) -> Animal
@@ -49,28 +65,37 @@ export default class AnimalViewModel extends BaseViewModel {
         photos?: File[] | null,
         documents?: File[] | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            id: animalId,
+            name,
+            age,
+            weight,
+            description,
+            photos: null, // TODO: обробка файлів
+            documents: null, // TODO: обробка файлів
+            isHealthy,
+            isVaccinated,
+            isSterilized,
+            adoptionStatus
+        };
+        return await this.put(body);
     }
 
     //deleteAnimal(animalId)
     //функція видалення тваринки з бази даних
     async deleteAnimal(animalId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.delete(`/${animalId}`);
     }
 
     //getAnimalById(animalId) -> Animal
     //функція повертає дані про тварину
     async getAnimalById(animalId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${animalId}`);
     }
 
     //getAnimalsByShelter(shelterId) -> [Animal]
     //функція повертає всіх тварин притулку
     async getAnimalsByShelter(shelterId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/shelter/${shelterId}`);
     }
 }

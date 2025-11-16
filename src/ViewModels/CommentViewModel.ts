@@ -13,15 +13,15 @@ export default class CommentViewModel extends BaseViewModel {
     // - creationDate = NOW
     // - deletionDate = NULL
     async addComment(postId: number, authorId: string, content: string): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { postId, authorId, content };
+        return await this.post(body);
     }
 
     //editCommentStatus(commentId, status) -> Comment
     //функція для редагування статусу коментаря (модератор)
     async editCommentStatus(commentId: number, status: ActivityStatus): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { id: commentId, status };
+        return await this.patch(body);
     }
 
     //deleteComment(commentId)
@@ -29,21 +29,18 @@ export default class CommentViewModel extends BaseViewModel {
     // - при видаленні викликаємо editCommentStatus(commentId, status=deleted)
     // - deletionDate = NOW
     async deleteComment(commentId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.delete(`/${commentId}`);
     }
 
     //getCommentById(commentId) -> Comment
     //функція повертає дані про коментар
     async getCommentById(commentId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${commentId}`);
     }
 
     //getCommentsByPost(postId) -> [Comment]
     //функція для пошуку коментарів за постом
     async getCommentsByPost(postId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/post/${postId}`);
     }
 }

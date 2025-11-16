@@ -15,22 +15,25 @@ export default class ReportViewModel extends BaseViewModel {
         photos?: File[] | null,
         documents?: File[] | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = {
+            postId,
+            text,
+            photos: null, // TODO: обробка файлів
+            documents: null // TODO: обробка файлів
+        };
+        return await this.post(body);
     }
 
     //deleteReport(postId)
     //функція для видалення звіту
     // - просто одразу видалення з бази даних
     async deleteReport(postId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.delete(`/${postId}`);
     }
 
     //getReportById(reportId) -> Report
     //функція повертає дані про звіт
     async getReportById(reportId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${reportId}`);
     }
 }

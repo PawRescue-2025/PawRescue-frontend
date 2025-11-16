@@ -5,7 +5,6 @@ export default class ShelterViewModel extends BaseViewModel {
     constructor() {
         super(API_ENDPOINTS.SHELTER);
     }
-
     //addShelter(ownerId, name, description, contactPhone (O), contactEmail (O), contactLink (O), location)
     //функція для створення притулку
     // - під час реєстрації користувача типу shelterOwner надається форма,
@@ -20,13 +19,14 @@ export default class ShelterViewModel extends BaseViewModel {
         contactEmail?: string | null,
         contactLink?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { ownerId, name, description, location };
+        return await this.post(body);
     }
 
     //editShelter(name, description, contactPhone (O), contactEmail (O), contactLink (O), location) -> Shelter
     //функція для редагування притулку
     async editShelter(
+        shelterId: number,
         name: string,
         description: string,
         location?: string,
@@ -34,14 +34,13 @@ export default class ShelterViewModel extends BaseViewModel {
         contactEmail?: string | null,
         contactLink?: string | null
     ): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        const body = { shelterId, name, description, location };
+        return await this.put(body);
     }
 
     //getShelterById(shelterId) -> Shelter
     //функція повертає дані про притулок
     async getShelterById(shelterId: number): Promise<any> {
-        // TODO: реалізація запиту
-        throw new Error("Not implemented");
+        return await this.get(`/${shelterId}`);
     }
 }
