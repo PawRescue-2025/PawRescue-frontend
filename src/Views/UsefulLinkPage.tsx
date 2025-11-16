@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UsefulLinkViewModel from "../ViewModels/UsefulLinkViewModel";
-import AuthViewModel from "../ViewModels/AuthViewModel";
 
 const linkVM = new UsefulLinkViewModel();
-const authVM = new AuthViewModel();
 
 interface UsefulLink {
     id: number;
@@ -16,17 +14,6 @@ const UsefulLinksPage: React.FC = () => {
     const [links, setLinks] = useState<UsefulLink[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const login = async () => {
-            try {
-                await authVM.logIn("test@test.com", "Qwerty123!");
-            } catch (err: any) {
-                setError(err.message || "Помилка при логіні");
-            }
-        };
-        login();
-    }, []);
 
     const [newLink, setNewLink] = useState<{ type: string; title: string; content: string }>({
         type: "",
