@@ -25,7 +25,7 @@ export default function LoginPage() {
         try {
             const result = await authVM.logIn(email, password);
             alert("Login successful");
-            navigate("/useful-links");
+            navigate("/main");
         } catch (error: any) {
             alert(error?.message || "Login failed");
         }
@@ -85,7 +85,7 @@ export default function LoginPage() {
             if (userRole === UserType.ShelterOwner) {
                 navigate("/add-shelter", { state: { userId } });
             } else {
-                navigate("/useful-links");
+                navigate("/main");
             }
         } catch (error: any) {
             alert(error?.message || "Помилка під час реєстрації");

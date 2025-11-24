@@ -43,7 +43,7 @@ export default function AddShelterPage() {
             console.log("Shelter created:", result);
             alert("Притулок успішно створено!");
 
-            navigate("/useful-links");
+            navigate("/main");
         } catch (error: any) {
             console.error(error);
             alert(error?.message || "Помилка створення притулку");
