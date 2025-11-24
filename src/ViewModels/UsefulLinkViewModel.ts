@@ -10,6 +10,7 @@ export default class UsefulLinkViewModel extends BaseViewModel {
     //функція для створення UsefulLink (модератор)
     async addUsefulLink(type: string, title: string, content: string): Promise<any> {
         const body = { type, title, content };
+        console.log(content)
         return await this.post(body);
     }
 
@@ -17,6 +18,7 @@ export default class UsefulLinkViewModel extends BaseViewModel {
     //функція для редагування UsefulLink (модератор)
     async editUsefulLink(linkId: number, title: string, content: string): Promise<any> {
         const body = { id: linkId, title, content };
+        console.log(content)
         return await this.put(body);
     }
 
