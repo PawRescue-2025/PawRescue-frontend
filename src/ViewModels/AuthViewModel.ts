@@ -14,6 +14,7 @@ export default class AuthViewModel extends BaseViewModel {
         const body = { email, password };
         const data = await this.post(body, "/login");
         localStorage.setItem("token", data.accessToken);
+        localStorage.setItem("userId", data.user.userId);
         return data;
     }
 
