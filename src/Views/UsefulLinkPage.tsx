@@ -119,7 +119,7 @@ const UsefulLinksPage: React.FC = () => {
                     margin-right: 4vw;
                     border-radius: 30px;
                     width: 90vw;
-                    height: 90vh;
+                    min-height: 90vh;
                 }
 
                 .link-type-header {
