@@ -44,4 +44,10 @@ export default class ShelterViewModel extends BaseViewModel {
     async getShelterById(shelterId: number): Promise<any> {
         return await this.get(`/${shelterId}`);
     }
+
+    //getShelterByOwner(userId) -> Shelter
+    //функція повертає дані про притулок
+    async getShelterByOwnerId(userId: number): Promise<any> {
+        //TODO
+    }
 }
