@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import ComplaintViewModel from "../ViewModels/ComplaintViewModel";
 import { ComplaintStatus } from "../Enums/ComplaintStatus";
 import { ComplaintCategory } from "../Enums/ComplaintCategory";
 import UserViewModel from "../ViewModels/UserViewModel";
 import PostViewModel from "../ViewModels/PostViewModel";
+
 
 const postVM = new PostViewModel();
 const complaintVM = new ComplaintViewModel();
@@ -135,6 +136,7 @@ const ModeratorComplaintsPage: React.FC = () => {
         return matchCategory && matchStatus && matchSearch;
     });
 
+
     return (
         <div
             style={{
@@ -171,6 +173,8 @@ const ModeratorComplaintsPage: React.FC = () => {
                     flex-direction: column;
                     align-items: center;
                     position: relative;
+                    min-height: 85vh;
+                    margin-top: 50px;
                 }
 
                 .complaint-card {
@@ -347,9 +351,13 @@ const ModeratorComplaintsPage: React.FC = () => {
                                 <p>
                                     <b>Коментатор:</b>{" "}
                                     <span
-                                        style={{ textDecoration: "underline", cursor: "pointer", color: "#0645ad" }}
+                                        style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
                                         onMouseEnter={(e) => loadUser(c.complainantId!, e.clientX, e.clientY)}
-                                        onMouseMove={(e) => setHoveredUser(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : prev)}
+                                        onMouseMove={(e) => setHoveredUser(prev => prev ? {
+                                            ...prev,
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        } : prev)}
                                         onMouseLeave={() => setHoveredUser(null)}
                                     >
                                     {c.complainantId}
@@ -360,9 +368,13 @@ const ModeratorComplaintsPage: React.FC = () => {
                                 <p>
                                     <b>Користувач:</b>{" "}
                                     <span
-                                        style={{ textDecoration: "underline", cursor: "pointer", color: "#0645ad" }}
+                                        style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
                                         onMouseEnter={(e) => loadUser(c.userId!, e.clientX, e.clientY)}
-                                        onMouseMove={(e) => setHoveredUser(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : prev)}
+                                        onMouseMove={(e) => setHoveredUser(prev => prev ? {
+                                            ...prev,
+                                            x: e.clientX,
+                                            y: e.clientY
+                                        } : prev)}
                                         onMouseLeave={() => setHoveredUser(null)}
                                     >
                                     {c.userId}
@@ -373,10 +385,10 @@ const ModeratorComplaintsPage: React.FC = () => {
                                 <p>
                                     <b>Пост:</b>{" "}
                                     <span
-                                        style={{ textDecoration: "underline", cursor: "pointer", color: "#0645ad" }}
+                                        style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
                                         onMouseEnter={(e) => loadPost(c.postId!, e.clientX, e.clientY)}
                                         onMouseMove={(e) =>
-                                            setHoveredPost(prev => prev ? { ...prev, x: e.clientX, y: e.clientY } : prev)
+                                            setHoveredPost(prev => prev ? {...prev, x: e.clientX, y: e.clientY} : prev)
                                         }
                                         onMouseLeave={() => setHoveredPost(null)}
                                     >
@@ -413,7 +425,7 @@ const ModeratorComplaintsPage: React.FC = () => {
             {hoveredUser && hoveredUser.user && (
                 <div
                     className="user-tooltip"
-                    style={{ top: hoveredUser.y + 10, left: hoveredUser.x + 10 }}
+                    style={{top: hoveredUser.y + 10, left: hoveredUser.x + 10}}
                 >
                     <div><b>ID:</b> {hoveredUser.user.id}</div>
                     <div><b>Ім'я:</b> {hoveredUser.user.fullName}</div>

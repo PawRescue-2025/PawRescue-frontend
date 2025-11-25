@@ -57,7 +57,7 @@ const TestPage: React.FC = () => {
         userId: "614bc804-7897-4278-9fff-64d98ef605b7",
         shelterId: 1,
         animalId: 5,
-        postId: 4,
+        postId: 20,
         commentId: 1,
         complaintId: 1,
         pointsId: 1,
@@ -203,7 +203,7 @@ const TestPage: React.FC = () => {
                 )}>Test logIn</button>
                 
                 <button onClick={() => handleTest("AuthViewModel.logout", () => 
-                    authVM.logout(123)
+                    authVM.logout("becghvwbehjgcvbehwjcbhjecvb")
                 )}>Test logout (NOT IMPLEMENTED)</button>
                 
                 <button onClick={() => handleTest("AuthViewModel.signUpUnverified", () => 

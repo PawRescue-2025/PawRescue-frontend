@@ -17,12 +17,13 @@ export default class AuthViewModel extends BaseViewModel {
         const data = await this.post(body, "/login");
         localStorage.setItem("token", data.accessToken);
         localStorage.setItem("userId", data.user.userId);
+        localStorage.setItem("status", data.status);
         return data;
     }
 
     //logout(userId)
     //функція для виходу з акаунта
-    async logout(userId: number): Promise<any> {
+    async logout(userId: string): Promise<any> {
         localStorage.removeItem("token");
     }
 

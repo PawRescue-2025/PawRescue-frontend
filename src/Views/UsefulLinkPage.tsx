@@ -25,9 +25,6 @@ const UsefulLinksPage: React.FC = () => {
         content: "",
     });
 
-    const [role, setRole] = useState("");
-    const neededRole = "admin2@test.co"
-
 
     const fetchLinks = async () => {
         setLoading(true);
@@ -44,27 +41,22 @@ const UsefulLinksPage: React.FC = () => {
 
     useEffect(() => {
         fetchLinks();
-        fetchRole();
+        loadUser();
     }, []);
 
     const toggleType = (type: string) => {
         setExpandedTypes((prev) => ({ ...prev, [type]: !prev[type] }));
     };
 
-    //TODO: замінити імеіл на роль
-    const fetchRole = async () => {
-        setLoading(true);
-        setError(null);
+    const [userRole, setUserRole] = useState<number>();
+
+    const loadUser = async () => {
         try {
             let userId = localStorage.getItem("userId");
-            // @ts-ignore
-            const data = await userVM.getUserById(userId);
-            setRole(data.email)
-
-        } catch (err: any) {
-            setError(err.message || "Помилка при завантаженні");
-        } finally {
-            setLoading(false);
+            let res  = await userVM.getUserById(String(userId))
+            setUserRole(Number(res.status))
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -116,10 +108,10 @@ const UsefulLinksPage: React.FC = () => {
                     border: 2px solid rgba(255, 255, 255, 0.5);
                     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
                     padding: 2rem;
-                    margin-right: 4vw;
                     border-radius: 30px;
                     width: 90vw;
-                    min-height: 90vh;
+                    min-height: 85vh;
+                    margin-top: 50px;
                 }
 
                 .link-type-header {
@@ -206,9 +198,7 @@ const UsefulLinksPage: React.FC = () => {
 
                 {error && <div className="text-red-500 mb-4">{error}</div>}
 
-
-                //TODO: замінити імеіл на роль
-                {role === neededRole &&
+                {userRole === 3 &&
                 <form onSubmit={handleAddOrEdit} className="mb-4">
                     <input
                         className="form-control input-glass"
@@ -258,7 +248,7 @@ const UsefulLinksPage: React.FC = () => {
                                     <div key={link.id} className="link-card">
                                         <h3 className="font-semibold">{link.title}</h3>
                                         <p>{link.content}</p>
-                                        {role === neededRole &&
+                                        {userRole === 3 &&
                                         <div className="link-actions">
                                             <button
                                                 className="btn-small"

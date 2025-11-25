@@ -25,7 +25,11 @@ export default function LoginPage() {
         try {
             const result = await authVM.logIn(email, password);
             alert("Login successful");
-            navigate("/main");
+            if (userRole === UserType.Moderator) {
+                navigate("/complaints");
+            }else{
+                navigate("/main");
+            }
         } catch (error: any) {
             alert(error?.message || "Login failed");
         }
