@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import AnimalViewModel from "../ViewModels/AnimalViewModel";
 import AuthViewModel from "../ViewModels/AuthViewModel";
 import CommentViewModel from "../ViewModels/CommentViewModel";
@@ -23,6 +23,18 @@ import { VerificationStatus } from "../Enums/VerificationStatus";
 import { ComplaintStatus } from "../Enums/ComplaintStatus";
 
 const TestPage: React.FC = () => {
+    const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const [selectedDocument, setSelectedDocument] = useState<File | null>(null);
+    const [documentPreview, setDocumentPreview] = useState<string | null>(null);
+    const documentInputRef = useRef<HTMLInputElement>(null);
+
+    const [selectedSignUpDoc, setSelectedSignUpDoc] = useState<File | null>(null);
+    const [signUpDocPreview, setSignUpDocPreview] = useState<string | null>(null);
+    const signUpDocInputRef = useRef<HTMLInputElement>(null);
+
     const animalVM = new AnimalViewModel();
     const authVM = new AuthViewModel();
     const commentVM = new CommentViewModel();
@@ -38,8 +50,8 @@ const TestPage: React.FC = () => {
 
     // Тестові дані
     const testData = {
-        email: "admin2@test.com",
-        password: "Testtest0!",
+        email: "string",
+        password: "String1@",
         fullName: "Test User",
         phoneNumber: "+380501234567",
         userId: "614bc804-7897-4278-9fff-64d98ef605b7",
@@ -71,6 +83,113 @@ const TestPage: React.FC = () => {
         }
     };
 
+    const handlePhotoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setSelectedPhoto(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPhotoPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleEditUserWithPhoto = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const executeEditUser = async () => {
+        await handleTest("UserViewModel.editUser", () => 
+            userVM.editUser(
+                testData.userId, 
+                "updated@example.com", 
+                "NewPass123!", 
+                "Updated Name", 
+                "+380509999999",
+                selectedPhoto,
+                "Updated description"
+            )
+        );
+        // Очистити вибране фото після виконання
+        setSelectedPhoto(null);
+        setPhotoPreview(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const handleDocumentSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setSelectedDocument(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setDocumentPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleAddVerificationRequest = () => {
+        if (documentInputRef.current) {
+            documentInputRef.current.click();
+        }
+    };
+
+    const executeAddVerificationRequest = async () => {
+        if (!selectedDocument) return;
+        await handleTest("VerificationViewModel.addVerificationRequest", () => 
+            verificationVM.addVerificationRequest(testData.userId, [selectedDocument])
+        );
+        // Очистити вибраний документ після виконання
+        setSelectedDocument(null);
+        setDocumentPreview(null);
+        if (documentInputRef.current) {
+            documentInputRef.current.value = '';
+        }
+    };
+
+    const handleSignUpDocSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setSelectedSignUpDoc(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSignUpDocPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSignUpVerifiedWithDoc = () => {
+        if (signUpDocInputRef.current) {
+            signUpDocInputRef.current.click();
+        }
+    };
+
+    const executeSignUpVerified = async () => {
+        if (!selectedSignUpDoc) return;
+        await handleTest("AuthViewModel.signUpVerified", () => 
+            authVM.signUpVerified(
+                "newemail4", 
+                testData.password, 
+                testData.fullName, 
+                testData.phoneNumber, 
+                UserType.ShelterOwner, 
+                [selectedSignUpDoc]
+            )
+        );
+        // Очистити вибраний документ після виконання
+        setSelectedSignUpDoc(null);
+        setSignUpDocPreview(null);
+        if (signUpDocInputRef.current) {
+            signUpDocInputRef.current.value = '';
+        }
+    };
+
     return (
         <div style={{ padding: "20px", fontFamily: "monospace" }}>
             <h1>🧪 ViewModels Test Page</h1>
@@ -91,9 +210,43 @@ const TestPage: React.FC = () => {
                     authVM.signUpUnverified(testData.email, testData.password, testData.fullName, testData.phoneNumber)
                 )}>Test signUpUnverified</button>
                 
-                <button onClick={() => handleTest("AuthViewModel.signUpVerified", () => 
-                    authVM.signUpVerified(testData.email, testData.password, testData.fullName, testData.phoneNumber, UserType.Volunteer, [])
-                )}>Test signUpVerified</button>
+                <div style={{ marginTop: "10px" }}>
+                    <input 
+                        type="file" 
+                        ref={signUpDocInputRef}
+                        onChange={handleSignUpDocSelect}
+                        accept="image/*,.pdf,.doc,.docx"
+                        style={{ display: 'none' }}
+                    />
+                    <button onClick={handleSignUpVerifiedWithDoc}>
+                        {selectedSignUpDoc ? '📄 Змінити документ' : '📄 Вибрати документ для signUpVerified'}
+                    </button>
+                    {signUpDocPreview && (
+                        <div style={{ marginTop: "10px" }}>
+                            {selectedSignUpDoc?.type.startsWith('image/') ? (
+                                <img 
+                                    src={signUpDocPreview} 
+                                    alt="Document Preview" 
+                                    style={{ maxWidth: "200px", maxHeight: "200px", border: "1px solid #ccc" }}
+                                />
+                            ) : (
+                                <div style={{ padding: "10px", border: "1px solid #ccc", maxWidth: "200px" }}>
+                                    📄 Документ
+                                </div>
+                            )}
+                            <p style={{ fontSize: "12px", color: "#666" }}>
+                                Вибрано: {selectedSignUpDoc?.name}
+                            </p>
+                        </div>
+                    )}
+                </div>
+                <button 
+                    onClick={executeSignUpVerified}
+                    disabled={!selectedSignUpDoc}
+                    style={{ opacity: selectedSignUpDoc ? 1 : 0.5 }}
+                >
+                    Test signUpVerified {selectedSignUpDoc ? '(з документом)' : '(виберіть документ)'}
+                </button>
             </section>
 
             {/* AnimalViewModel */}
@@ -200,11 +353,11 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>📝 PostViewModel</h2>
                 <button onClick={() => handleTest("PostViewModel.addPost", () => 
-                    postVM.addPost(testData.userId, PostType.Story, "Test Post", "This is test content", [], new Date(), "", "", "", "Kyiv")
+                    postVM.addPost(testData.userId, PostType.Story, "Test Post", "Тестовий контент разом з буквами ї'іє", [], new Date(), "312312", "dsadas", "asdads", "Kyiv")
                 )}>Test addPost</button>
                 
                 <button onClick={() => handleTest("PostViewModel.editPost", () => 
-                    postVM.editPost(testData.postId, "Updated content", new Date(), "", "", "", "Lviv")
+                    postVM.editPost(testData.postId, "Updated content", new Date(), null, null, null, "Lviv")
                 )}>Test editPost</button>
                 
                 <button onClick={() => handleTest("PostViewModel.editHelpRequestStatus", () => 
@@ -319,9 +472,37 @@ const TestPage: React.FC = () => {
             {/* UserViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>👤 UserViewModel</h2>
-                <button onClick={() => handleTest("UserViewModel.editUser", () => 
-                    userVM.editUser(testData.userId, "updated@example.com", "NewPass123!", "Updated Name", "+380509999999")
-                )}>Test editUser</button>
+                <div style={{ marginBottom: "10px" }}>
+                    <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        onChange={handlePhotoSelect}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                    />
+                    <button onClick={handleEditUserWithPhoto}>
+                        {selectedPhoto ? '📷 Змінити фото' : '📷 Вибрати фото для editUser'}
+                    </button>
+                    {photoPreview && (
+                        <div style={{ marginTop: "10px" }}>
+                            <img 
+                                src={photoPreview} 
+                                alt="Preview" 
+                                style={{ maxWidth: "200px", maxHeight: "200px", border: "1px solid #ccc" }}
+                            />
+                            <p style={{ fontSize: "12px", color: "#666" }}>
+                                Вибрано: {selectedPhoto?.name}
+                            </p>
+                        </div>
+                    )}
+                </div>
+                <button 
+                    onClick={executeEditUser}
+                    disabled={!selectedPhoto}
+                    style={{ opacity: selectedPhoto ? 1 : 0.5 }}
+                >
+                    Test editUser {selectedPhoto ? '(з фото)' : '(виберіть фото)'}
+                </button>
                 
                 <button onClick={() => handleTest("UserViewModel.deleteUser", () => 
                     userVM.deleteUser(testData.userId)
@@ -347,6 +528,44 @@ const TestPage: React.FC = () => {
             {/* VerificationViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>✔️ VerificationViewModel</h2>
+                <div style={{ marginBottom: "10px" }}>
+                    <input 
+                        type="file" 
+                        ref={documentInputRef}
+                        onChange={handleDocumentSelect}
+                        accept="image/*,.pdf,.doc,.docx"
+                        style={{ display: 'none' }}
+                    />
+                    <button onClick={handleAddVerificationRequest}>
+                        {selectedDocument ? '📄 Змінити документ' : '📄 Вибрати документ для верифікації'}
+                    </button>
+                    {documentPreview && (
+                        <div style={{ marginTop: "10px" }}>
+                            {selectedDocument?.type.startsWith('image/') ? (
+                                <img 
+                                    src={documentPreview} 
+                                    alt="Document Preview" 
+                                    style={{ maxWidth: "200px", maxHeight: "200px", border: "1px solid #ccc" }}
+                                />
+                            ) : (
+                                <div style={{ padding: "10px", border: "1px solid #ccc", maxWidth: "200px" }}>
+                                    📄 Документ
+                                </div>
+                            )}
+                            <p style={{ fontSize: "12px", color: "#666" }}>
+                                Вибрано: {selectedDocument?.name}
+                            </p>
+                        </div>
+                    )}
+                </div>
+                <button 
+                    onClick={executeAddVerificationRequest}
+                    disabled={!selectedDocument}
+                    style={{ opacity: selectedDocument ? 1 : 0.5 }}
+                >
+                    Test addVerificationRequest {selectedDocument ? '(з документом)' : '(виберіть документ)'}
+                </button>
+                
                 <button onClick={() => handleTest("VerificationViewModel.getAllVerifications", () => 
                     verificationVM.getAllVerifications()
                 )}>Test getAllVerifications</button>

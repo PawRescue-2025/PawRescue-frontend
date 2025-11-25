@@ -1,6 +1,7 @@
 import { VerificationStatus } from "../Enums/VerificationStatus";
 import BaseViewModel from "./BaseViewModel";
 import { API_ENDPOINTS } from "../config/constants";
+import FileViewModel from "./FIleViewModel";
 
 export default class VerificationViewModel extends BaseViewModel {
     constructor() {
@@ -23,5 +24,23 @@ export default class VerificationViewModel extends BaseViewModel {
     async editVerificationStatus(verificationId: number, status: VerificationStatus): Promise<any> {
         const body = { id: verificationId, status };
         return await this.patch(body);
+    }
+
+    async addVerificationRequest(
+        userId: string,
+        documents: File[]
+    ): Promise<any> {
+        const fileVM = new FileViewModel();
+        const docUrls = [];
+        for (const documentFile of documents) {
+            const docUrl = await fileVM.uploadFile(documentFile!);
+            docUrls.push(docUrl);
+        }
+        const body = {
+            userId,
+            documents: docUrls,
+            status: VerificationStatus.Pending
+        };
+        return await this.post(body);
     }
 }

@@ -1,6 +1,7 @@
 import { ActivityStatus } from "../Enums/ActivityStatus";
 import BaseViewModel from "./BaseViewModel";
-import { API_ENDPOINTS } from "../config/constants";
+import { API_ENDPOINTS, DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
+import FileViewModel from "./FIleViewModel";
 
 export default class UserViewModel extends BaseViewModel {
     constructor() {
@@ -17,13 +18,19 @@ export default class UserViewModel extends BaseViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
+        let photo_url = null;
+        if (photo) {
+            const fileVM = new FileViewModel();
+            photo_url = await fileVM.uploadFile(photo);
+        }
+        
         const body = {
             id: userId,
             email,
             password,
             fullName,
             phoneNumber,
-            photo: null, // TODO: обробка файлів
+            photo: photo_url,
             description
         };
         return await this.put(body);

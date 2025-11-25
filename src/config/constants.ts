@@ -13,4 +13,7 @@ export const API_ENDPOINTS = {
     USEFUL_LINK: "/api/UsefulLink",
     USER: "/api/UserProfile",
     VERIFICATION: "/api/Verification",
+    FILE: "/api/FileManagement/upload",
 } as const;
+
+export const DEFAULT_PROFILE_PICTURE_URL = "https://pawrescuestorage.blob.core.windows.net/files/47da5413-0a3f-4227-a6e8-41f4d4cb7c28.jpg";

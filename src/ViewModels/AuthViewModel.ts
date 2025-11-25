@@ -1,6 +1,8 @@
 import { UserType } from "../Enums/UserType";
 import BaseViewModel from "./BaseViewModel";
-import { API_ENDPOINTS } from "../config/constants";
+import { API_ENDPOINTS, DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
+import FileViewModel from "./FIleViewModel";
+import VerificationViewModel from "./VerificationViewModel";
 
 export default class AuthViewModel extends BaseViewModel {
     constructor() {
@@ -37,6 +39,8 @@ export default class AuthViewModel extends BaseViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
+        const fileVM = new FileViewModel();
+        const photo_url = photo ? await fileVM.uploadFile(photo!) : DEFAULT_PROFILE_PICTURE_URL;
         const body = {
             userName: email,
             email,
@@ -44,7 +48,7 @@ export default class AuthViewModel extends BaseViewModel {
             fullName,
             phoneNumber,
             description: description || null,
-            photo: null, // TODO: обробка файлів
+            photo: photo_url,
             role: 0 // UserRole.Caring
         };
         return await this.post(body, "/register");
@@ -66,6 +70,9 @@ export default class AuthViewModel extends BaseViewModel {
         photo?: File | null,
         description?: string | null
     ): Promise<any> {
+        const fileVM = new FileViewModel();
+        const photo_url = photo ? await fileVM.uploadFile(photo!) : DEFAULT_PROFILE_PICTURE_URL;
+        
         const body = {
             userName: email,
             email,
@@ -73,10 +80,17 @@ export default class AuthViewModel extends BaseViewModel {
             fullName,
             phoneNumber,
             description: description || null,
-            photo: null, // TODO: обробка файлів
+            photo: photo_url,
             role: userType // 1 = Volunteer, 2 = ShelterOwner
         };
-        // TODO: documents - створити Verification після реєстрації
-        return await this.post(body, "/register");
+
+        await this.post(body, "/register");
+
+        const data = await this.logIn(email, password);
+
+        const verificationVM = new VerificationViewModel();
+        await verificationVM.addVerificationRequest(data.user.userId, documents);
+
+        return data;
     }
 }

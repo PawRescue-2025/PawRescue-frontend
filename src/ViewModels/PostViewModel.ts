@@ -2,6 +2,7 @@ import { PostType } from "../Enums/PostType";
 import { ActivityStatus } from "../Enums/ActivityStatus";
 import BaseViewModel from "./BaseViewModel";
 import { API_ENDPOINTS } from "../config/constants";
+import FileViewModel from "./FIleViewModel";
 
 export default class PostViewModel extends BaseViewModel {
     constructor() {
@@ -27,6 +28,13 @@ export default class PostViewModel extends BaseViewModel {
         contactLink: string = "",
         location: string = "",
     ): Promise<any> {
+        const photos_url = []
+        const fileVM = new FileViewModel();
+        for (const photo of photos) {
+            const url = await fileVM.uploadFile(photo);
+            photos_url.push(url);
+        }
+
         const body = {
             userId,
             postType,
@@ -35,7 +43,10 @@ export default class PostViewModel extends BaseViewModel {
             content,
             status: 0, // EntityStatus.Active
             location,
-            photos
+            contactPhone,
+            contactEmail,
+            contactLink,
+            photos: photos_url
         };
         return await this.post(body);
     }
@@ -45,13 +56,17 @@ export default class PostViewModel extends BaseViewModel {
     async editPost(
         postId: number,
         content: string,
-        eventDate?: Date,
-        contactPhone?: string | null,
-        contactEmail?: string | null,
-        contactLink?: string | null,
-        location?: string | null
+        eventDate: Date | null = null,
+        contactPhone: string | null = null,
+        contactEmail: string | null = null,
+        contactLink: string | null = null,
+        location: string | null = null
     ): Promise<any> {
-        const body = { id: postId, eventDate, content, location };
+        const params = { content, eventDate, contactPhone, contactEmail, contactLink, location };
+        const updates = Object.fromEntries(
+            Object.entries(params).filter(([, value]) => value != null)
+        );
+        const body = { id: postId, ...updates };
         return await this.put(body);
     }
 
@@ -81,7 +96,8 @@ export default class PostViewModel extends BaseViewModel {
     //функція повертає найновіші «усі» active пости
     // * реалізувати пагінацію, щоб не вивантажувати 100-500 постів за раз
     async getAllPosts(page: number = 1, limit: number = 30): Promise<any> {
-        // TODO: пагінація не реалізована в Swagger
+        // TODO: пагінація не реалізована в Swagger. Досі не реалізвано...
+        // повертаються вже відсортовані лише активні
         return await this.get();
     }
 
