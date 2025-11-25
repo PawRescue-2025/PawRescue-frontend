@@ -24,7 +24,6 @@ export default function LoginPage() {
     const handleLogin = async () => {
         try {
             const result = await authVM.logIn(email, password);
-            alert("Login successful");
             if (userRole === UserType.Moderator) {
                 navigate("/complaints");
             }else{
@@ -61,8 +60,6 @@ export default function LoginPage() {
                     photo,
                     description
                 );
-                console.log(result);
-                alert("Реєстрація (caring) успішна");
             } else {
                 if (documents.length === 0) {
                     alert("Для даних ролей необхідно завантажити документи.");
@@ -79,9 +76,6 @@ export default function LoginPage() {
                     photo,
                     description
                 );
-
-                console.log(result);
-                alert("Реєстрація (verified) успішна");
             }
 
             await authVM.logIn(email, password);
@@ -103,7 +97,6 @@ export default function LoginPage() {
                 background: "linear-gradient(135deg, #a8e9d3 0%, #76c9a7 50%)",
             }}
         >
-
             <style>{`
         .glass-card {
             background: rgba(255, 255, 255, 0.35);

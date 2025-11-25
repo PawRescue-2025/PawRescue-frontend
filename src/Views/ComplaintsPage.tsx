@@ -91,13 +91,12 @@ const ModeratorComplaintsPage: React.FC = () => {
         }
     };
 
-
-
     const fetchComplaints = async () => {
         setLoading(true);
         setError(null);
         try {
             const data = await complaintVM.getAllComplaints();
+            data.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id);
             setComplaints(data);
         } catch (err: any) {
             setError(err.message || "Помилка при завантаженні скарг");

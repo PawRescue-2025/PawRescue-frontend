@@ -3,6 +3,7 @@ import { PostType } from "../Enums/PostType";
 import { DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
 import CommentViewModel from "../ViewModels/CommentViewModel";
 import UserViewModel from "../ViewModels/UserViewModel";
+import ComplaintForm from "./AddComplaintForm";
 
 interface Post {
     id: number;
@@ -54,6 +55,18 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
     const [activePhotoIndex, setActivePhotoIndex] = useState(0);
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
+
+    const [isComplaintOpen, setIsComplaintOpen] = useState(false);
+    const [commentComplaint, setCommentComplaint] = useState<{
+        open: boolean;
+        commentId: number | null;
+        userId: string | null;
+    }>({
+        open: false,
+        commentId: null,
+        userId: null
+    });
+
 
     const fetchComments = async () => {
         try {
@@ -111,7 +124,7 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
         <div className="post-card">
             <button
                 className="report-btn"
-                onClick={() => console.log("Скарга на пост", post.id)}
+                onClick={() => setIsComplaintOpen(true)}
             >
                 ⚠
             </button>
@@ -140,6 +153,14 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
 
                 <span className="post-type">{postTypeLabels[post.postType]}</span>
             </div>
+
+            <ComplaintForm
+                isOpen={isComplaintOpen}
+                onClose={() => setIsComplaintOpen(false)}
+                targetType="post"
+                postId={post.id}
+                reportedUserId={post.userId}
+            />
 
             <div className="post-header">
                 <h3>{post.title || "(Без заголовка)"}</h3>
@@ -239,35 +260,67 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
                                 border: "1px solid #ccc"
                             }}
                         />
-                        <div style={{ flex: 1 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+                        <div style={{flex: 1}}>
+                            <div style={{display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px"}}>
                                 <strong>{comment.authorName}</strong>
-                                <small style={{ color: "#888", fontSize: "12px" }}>
+                                <small style={{color: "#888", fontSize: "12px"}}>
                                     {new Date(comment.creationDate).toLocaleString()}
                                 </small>
                             </div>
-                            <p style={{ margin: 0 }}>{comment.content}</p>
+                            <p style={{margin: 0}}>{comment.content}</p>
                         </div>
+                        <button
+                            style={{
+                                background: "transparent",
+                                border: "none",
+                                cursor: "pointer",
+                                fontSize: "1.2rem"
+                            }}
+                            onClick={() => {
+                                setCommentComplaint({
+                                    open: true,
+                                    commentId: comment.id,
+                                    userId: comment.authorId
+                                });
+                            }}
+                        >
+                            ⚠
+                        </button>
                     </div>
                 ))}
 
 
                 <div style={{marginTop: "0.5rem", display: "flex", gap: "0.5rem"}}>
-        <input
-            type="text"
+                    <input
+                        type="text"
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Написати коментар..."
-                        style={{ flex: 1, borderRadius: "8px", padding: "0.5rem" }}
+                        style={{flex: 1, borderRadius: "8px", border: "none", padding: "0.5rem"}}
                     />
                     <button
                         onClick={handleAddComment}
-                        style={{ borderRadius: "8px", padding: "0.25rem 0.7rem", backgroundColor: "#3fb573", fontSize: "1.5rem", color: "white", border: "none", cursor: "pointer" }}
+                        style={{
+                            borderRadius: "8px",
+                            padding: "0.25rem 0.7rem",
+                            backgroundColor: "#3fb573",
+                            fontSize: "1.5rem",
+                            color: "white",
+                            border: "none",
+                            cursor: "pointer"
+                        }}
                     >
                         ➤
                     </button>
                 </div>
             </div>
+            <ComplaintForm
+                isOpen={commentComplaint.open}
+                onClose={() => setCommentComplaint({open: false, commentId: null, userId: null})}
+                targetType="comment"
+                commentId={commentComplaint.commentId!}
+                reportedUserId={commentComplaint.userId!}
+            />
         </div>
     );
 };

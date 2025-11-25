@@ -59,7 +59,7 @@ const MenuBar: React.FC = () => {
                 Головна
             </NavLink>
 
-            {userRole === 3 &&
+            {/*{userRole === 3 &&*/}
             <NavLink
                 to="/complaints"
                 style={({isActive}) => ({
@@ -73,7 +73,7 @@ const MenuBar: React.FC = () => {
             >
                 Скарги
             </NavLink>
-            }
+            {/*}*/}
 
             <NavLink
                 to="/useful-links"

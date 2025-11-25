@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import PostViewModel from "../ViewModels/PostViewModel";
 import { PostType } from "../Enums/PostType";
 import UserViewModel from "../ViewModels/UserViewModel";
-import { DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
 import CreatePostModal from "../Components/CreatePostModal";
 import PostCard from "../Components/PostCard";
-
 
 const userVM = new UserViewModel();
 const postVM = new PostViewModel();
@@ -46,44 +44,11 @@ const MainPostsPage: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [newPost, setNewPost] = useState<{
-        type: PostType | "";
-        title: string;
-        content: string;
-        photos: File[];
-        eventDate: string;
-        contactPhone: string;
-        contactEmail: string;
-        contactLink: string;
-        location: string;
-    }>({
-        type: "",
-        title: "",
-        content: "",
-        photos: [],
-        eventDate: "",
-        contactPhone: "",
-        contactEmail: "",
-        contactLink: "",
-        location: ""
-    });
     const [showNewPostForm, setShowNewPostForm] = useState(false);
-
 
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
     const [filterType, setFilterType] = useState<PostType | "">("");
-
-    const [activePhotoIndex, setActivePhotoIndex] = useState(0);
-
-    const nextPhoto = (photos: string[]) => {
-        setActivePhotoIndex(prev => (prev + 1) % photos.length);
-    };
-
-    const prevPhoto = (photos: string[]) => {
-        setActivePhotoIndex(prev => (prev - 1 + photos.length) % photos.length);
-    };
-
 
     const fetchPosts = async () => {
         setLoading(true);
