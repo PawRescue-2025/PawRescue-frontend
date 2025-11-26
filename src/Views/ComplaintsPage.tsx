@@ -4,6 +4,7 @@ import { ComplaintStatus } from "../Enums/ComplaintStatus";
 import { ComplaintCategory } from "../Enums/ComplaintCategory";
 import UserViewModel from "../ViewModels/UserViewModel";
 import PostViewModel from "../ViewModels/PostViewModel";
+import PostCard from "../Components/PostCard";
 
 
 const postVM = new PostViewModel();
@@ -44,14 +45,9 @@ const ModeratorComplaintsPage: React.FC = () => {
     const [activeStatus, setActiveStatus] = useState<ComplaintStatus | -1>(-1);
     const [search, setSearch] = useState("");
 
-    const [hoveredPost, setHoveredPost] = useState<{
-        post: any | null;
-        x: number;
-        y: number;
-    } | null>(null);
+    const [expandedPosts, setExpandedPosts] = useState<{ [key: number]: boolean }>({});
 
-    const [postCache, setPostCache] = useState<{ [key: number]: any }>({});
-
+    const [popupPost, setPopupPost] = useState<any | null>(null);
 
     const [hoveredUser, setHoveredUser] = useState<{
         user: any | null;
@@ -76,20 +72,47 @@ const ModeratorComplaintsPage: React.FC = () => {
         }
     };
 
-    const loadPost = async (postId: number, x: number, y: number) => {
+    const [postCache, setPostCache] = useState<{ [key: number]: any }>({});
+
+    const openPostPopup = async (postId: number) => {
         if (postCache[postId]) {
-            setHoveredPost({ post: postCache[postId], x, y });
+            setPopupPost(postCache[postId]);
             return;
         }
 
         try {
             const post = await postVM.getPostById(postId);
-            setPostCache(prev => ({ ...prev, [postId]: post }));
-            setHoveredPost({ post, x, y });
+
+            let authorData;
+            try {
+                const user = await userVM.getUserById(post.userId);
+                authorData = {
+                    fullName: user.fullName,
+                    profileImage: user.profileImageUrl || null
+                };
+            } catch {
+                authorData = {
+                    fullName: "Невідомий користувач",
+                    profileImage: null
+                };
+            }
+            const postWithAuthor = {
+                ...post,
+                author: authorData
+            };
+            setPostCache(prev => ({
+                ...prev,
+                [postId]: postWithAuthor
+            }));
+            setPopupPost(postWithAuthor);
+
         } catch (err) {
             console.error(err);
         }
     };
+
+
+
 
     const fetchComplaints = async () => {
         setLoading(true);
@@ -365,7 +388,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                             )}
                             {c.userId && (
                                 <p>
-                                    <b>Користувач:</b>{" "}
+                                    <b>Користувач, що поскаржився:</b>{" "}
                                     <span
                                         style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
                                         onMouseEnter={(e) => loadUser(c.userId!, e.clientX, e.clientY)}
@@ -382,19 +405,16 @@ const ModeratorComplaintsPage: React.FC = () => {
                             )}
                             {c.postId && (
                                 <p>
-                                    <b>Пост:</b>{" "}
-                                    <span
-                                        style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
-                                        onMouseEnter={(e) => loadPost(c.postId!, e.clientX, e.clientY)}
-                                        onMouseMove={(e) =>
-                                            setHoveredPost(prev => prev ? {...prev, x: e.clientX, y: e.clientY} : prev)
-                                        }
-                                        onMouseLeave={() => setHoveredPost(null)}
+                                    <b>Пост, на який поскаржились:</b>{" "}
+                                    <button
+                                        onClick={() => openPostPopup(c.postId!)}
+                                        style={{background: "transparent", border: "none", color: "#0645ad"}}
                                     >
-                                {c.postId}
-                                    </span>
+                                        {c.postId}
+                                    </button>
                                 </p>
                             )}
+
 
                             {c.commentId && <p><b>Коментар:</b> {c.commentId}</p>}
                             <p><b>Категорія:</b> {categoryLabels[c.category]}</p>
@@ -421,34 +441,54 @@ const ModeratorComplaintsPage: React.FC = () => {
                     ))
                 )}
             </div>
-            {hoveredUser && hoveredUser.user && (
+
+            {popupPost && (
                 <div
-                    className="user-tooltip"
-                    style={{top: hoveredUser.y + 10, left: hoveredUser.x + 10}}
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        background: "rgba(0,0,0,0.45)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 99999
+                    }}
+                    onClick={() => setPopupPost(null)}
                 >
-                    <div><b>ID:</b> {hoveredUser.user.id}</div>
-                    <div><b>Ім'я:</b> {hoveredUser.user.fullName}</div>
-                    <div><b>Email:</b> {hoveredUser.user.email}</div>
+                    <div
+                        style={{
+                            background: "linear-gradient(135deg, #a8e9d3 0%, #76c9a7 50%)",
+                            borderRadius: "20px",
+                            padding: "3rem",
+                            width: "50%",
+                            position: "relative",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setPopupPost(null)}
+                            style={{
+                                position: "absolute",
+                                top: "10px",
+                                right: "15px",
+                                border: "none",
+                                background: "transparent",
+                                fontSize: "2rem",
+                                cursor: "pointer",
+                                color: "#444",
+                            }}
+                        >
+                            ×
+                        </button>
+
+                        <PostCard post={popupPost} isForModerator={false} />
+                    </div>
                 </div>
             )}
 
-            {hoveredPost && hoveredPost.post && (
-                <div
-                    className="user-tooltip"
-                    style={{ top: hoveredPost.y + 10, left: hoveredPost.x + 10 }}
-                >
-                    <div><b>ID Поста:</b> {hoveredPost.post.id}</div>
-                    <div><b>Автор:</b> {hoveredPost.post.userId}</div>
-                    <div><b>Текст:</b> {hoveredPost.post.content.slice(0, 120)}...</div>
-                    {hoveredPost.post.imageUrl && (
-                        <img
-                            src={hoveredPost.post.imageUrl}
-                            alt="preview"
-                            style={{ width: "100%", borderRadius: 8, marginTop: 6 }}
-                        />
-                    )}
-                </div>
-            )}
 
         </div>
     );

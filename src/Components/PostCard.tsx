@@ -34,6 +34,7 @@ interface Comment {
 }
 interface PostCardProps {
     post: Post;
+    isForModerator: boolean;
 }
 
 const postTypeLabels: { [key in PostType]: string } = {
@@ -51,7 +52,7 @@ const postTypeLabels: { [key in PostType]: string } = {
 const commentVM = new CommentViewModel();
 const userVM = new UserViewModel();
 
-const PostCard: React.FC<PostCardProps> = ({ post}) => {
+const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
     const [activePhotoIndex, setActivePhotoIndex] = useState(0);
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
@@ -122,12 +123,23 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
 
     return (
         <div className="post-card">
-            <button
+            {isForModerator && <button
                 className="report-btn"
                 onClick={() => setIsComplaintOpen(true)}
+                style={{
+                    position: "relative",
+                    bottom: "10px",
+                    left: "97%",
+                    marginBottom: " -50%",
+                    fontSize: "1.5rem",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                }}
             >
                 ⚠
             </button>
+            }
 
             <div className="post-header">
                 <div style={{
@@ -151,7 +163,15 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
                     <div><strong>{post.author?.fullName || "Користувач"}</strong></div>
                 </div>
 
-                <span className="post-type">{postTypeLabels[post.postType]}</span>
+                <span className="post-type" style={{
+                    fontSize: "0.85rem",
+                    fontWeight: "600",
+                    padding: "0.2rem 0.5rem",
+                    borderRadius: "8px",
+                    background: "rgba(63, 181, 115, 0.2)",
+                    color: "#0c3e2d",
+                }}
+                >{postTypeLabels[post.postType]}</span>
             </div>
 
             <ComplaintForm
@@ -233,87 +253,90 @@ const PostCard: React.FC<PostCardProps> = ({ post}) => {
             {post.eventDate && <p><b>Дата події:</b> {new Date(post.eventDate).toLocaleString()}</p>}
             <small>{new Date(post.creationDate).toLocaleDateString()}</small>
 
-            <div style={{marginTop: "1rem", borderTop: "1px solid #ccc", paddingTop: "1rem", width: "100%"}}>
-                <h5>Коментарі</h5>
-                {comments.length === 0 && <p>Немає коментарів</p>}
-                {comments.map(comment => (
-                    <div
-                        key={comment.id}
-                        style={{
-                            display: "flex",
-                            gap: "10px",
-                            alignItems: "flex-start",
-                            marginBottom: "12px",
-                            padding: "8px",
-                            borderRadius: "10px",
-                            backgroundColor: "rgba(249,249,249,0.5)"
-                        }}
-                    >
-                        <img
-                            src={comment.authorProfileImage || DEFAULT_PROFILE_PICTURE_URL}
-                            alt={comment.authorName}
+            {isForModerator &&
+                <div style={{marginTop: "1rem", borderTop: "1px solid #ccc", paddingTop: "1rem", width: "100%"}}>
+                    <h5>Коментарі</h5>
+                    {comments.length === 0 && <p>Немає коментарів</p>}
+                    {comments.map(comment => (
+                        <div
+                            key={comment.id}
                             style={{
-                                width: "40px",
-                                height: "40px",
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                border: "1px solid #ccc"
-                            }}
-                        />
-                        <div style={{flex: 1}}>
-                            <div style={{display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px"}}>
-                                <strong>{comment.authorName}</strong>
-                                <small style={{color: "#888", fontSize: "12px"}}>
-                                    {new Date(comment.creationDate).toLocaleString()}
-                                </small>
-                            </div>
-                            <p style={{margin: 0}}>{comment.content}</p>
-                        </div>
-                        <button
-                            style={{
-                                background: "transparent",
-                                border: "none",
-                                cursor: "pointer",
-                                fontSize: "1.2rem"
-                            }}
-                            onClick={() => {
-                                setCommentComplaint({
-                                    open: true,
-                                    commentId: comment.id,
-                                    userId: comment.authorId
-                                });
+                                display: "flex",
+                                gap: "10px",
+                                alignItems: "flex-start",
+                                marginBottom: "12px",
+                                padding: "8px",
+                                borderRadius: "10px",
+                                backgroundColor: "rgba(249,249,249,0.5)"
                             }}
                         >
-                            ⚠
+                            <img
+                                src={comment.authorProfileImage || DEFAULT_PROFILE_PICTURE_URL}
+                                alt={comment.authorName}
+                                style={{
+                                    width: "40px",
+                                    height: "40px",
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                    border: "1px solid #ccc"
+                                }}
+                            />
+                            <div style={{flex: 1}}>
+                                <div style={{display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px"}}>
+                                    <strong>{comment.authorName}</strong>
+                                    <small style={{color: "#888", fontSize: "12px"}}>
+                                        {new Date(comment.creationDate).toLocaleString()}
+                                    </small>
+                                </div>
+                                <p style={{margin: 0}}>{comment.content}</p>
+                            </div>
+                            <button
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    fontSize: "1.2rem"
+                                }}
+                                onClick={() => {
+                                    setCommentComplaint({
+                                        open: true,
+                                        commentId: comment.id,
+                                        userId: comment.authorId
+                                    });
+                                }}
+                            >
+                                ⚠
+                            </button>
+                        </div>
+
+                    ))}
+
+                    <div style={{marginTop: "0.5rem", display: "flex", gap: "0.5rem"}}>
+                        <input
+                            type="text"
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder="Написати коментар..."
+                            style={{flex: 1, borderRadius: "8px", border: "none", padding: "0.5rem"}}
+                        />
+                        <button
+                            onClick={handleAddComment}
+                            style={{
+                                borderRadius: "8px",
+                                padding: "0.25rem 0.7rem",
+                                backgroundColor: "#3fb573",
+                                fontSize: "1.5rem",
+                                color: "white",
+                                border: "none",
+                                cursor: "pointer"
+                            }}
+                        >
+                            ➤
                         </button>
                     </div>
-                ))}
-
-
-                <div style={{marginTop: "0.5rem", display: "flex", gap: "0.5rem"}}>
-                    <input
-                        type="text"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Написати коментар..."
-                        style={{flex: 1, borderRadius: "8px", border: "none", padding: "0.5rem"}}
-                    />
-                    <button
-                        onClick={handleAddComment}
-                        style={{
-                            borderRadius: "8px",
-                            padding: "0.25rem 0.7rem",
-                            backgroundColor: "#3fb573",
-                            fontSize: "1.5rem",
-                            color: "white",
-                            border: "none",
-                            cursor: "pointer"
-                        }}
-                    >
-                        ➤
-                    </button>
                 </div>
-            </div>
+            }
+
             <ComplaintForm
                 isOpen={commentComplaint.open}
                 onClose={() => setCommentComplaint({open: false, commentId: null, userId: null})}

@@ -158,15 +158,6 @@ const MainPostsPage: React.FC = () => {
                     margin-bottom: 0.5rem;
                 }
 
-                .post-type {
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                    padding: 0.2rem 0.5rem;
-                    border-radius: 8px;
-                    background: rgba(63, 181, 115, 0.2);
-                    color: #0c3e2d;
-                }
-
                 .filter-panel {
                     display: flex;
                     gap: 0.5rem;
@@ -209,17 +200,6 @@ const MainPostsPage: React.FC = () => {
                     background: rgba(255, 255, 255, 0.35);
                     outline: none;
                     box-shadow: 0 0 8px rgba(0,0,0,0.1);
-                }
-                
-                .report-btn {
-                    position: relative;
-                    bottom: 10px;
-                    left: 97%;
-                    margin-bottom: -50%;
-                    font-size: 1.5rem;
-                    background: transparent;
-                    border: none;
-                    cursor: pointer;
                 }
 
             `}</style>
@@ -283,7 +263,7 @@ const MainPostsPage: React.FC = () => {
 
                 <div className="post-cards">
                     {loading ? <p>Завантаження...</p> : (
-                        paginatedPosts.map(post => <PostCard key={post.id} post={post} />)
+                        paginatedPosts.map(post => <PostCard key={post.id} post={post} isForModerator={true} />)
 
                     )}
                 </div>
