@@ -21,6 +21,7 @@ interface Post {
     contactLink?: string;
     photos?: string[];
     userId: string;
+    status: number;
     author?: {
         fullName: string;
         profileImage: string | null;
@@ -263,7 +264,7 @@ const MainPostsPage: React.FC = () => {
 
                 <div className="post-cards">
                     {loading ? <p>Завантаження...</p> : (
-                        paginatedPosts.map(post => <PostCard key={post.id} post={post} isForModerator={true} />)
+                        paginatedPosts.map(post => <PostCard key={post.id} post={post} isForUsers={true} />)
 
                     )}
                 </div>

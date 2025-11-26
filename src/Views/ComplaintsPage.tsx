@@ -147,6 +147,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                 content: comment.content,
                 creationDate: comment.creationDate,
                 onReport: comment.onReport,
+                status: comment.status,
             };
 
             setCommentCache(prev => ({ ...prev, [commentId]: commentData }));
@@ -164,7 +165,6 @@ const ModeratorComplaintsPage: React.FC = () => {
             const data = await complaintVM.getAllComplaints();
             data.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id);
             setComplaints(data);
-            console.log(data)
         } catch (err: any) {
             setError(err.message || "Помилка при завантаженні скарг");
         } finally {
@@ -412,7 +412,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                                 ×
                             </button>
 
-                            <p><b>Скарга ID:</b> {c.id}</p>
+                            <p><b>Скарга №:</b> {c.id}</p>
 
                             {c.complainantId && (
                                 <p>
@@ -477,7 +477,6 @@ const ModeratorComplaintsPage: React.FC = () => {
 
                             <p><b>Категорія:</b> {categoryLabels[c.category]}</p>
                             {c.description && <p><b>Опис:</b> {c.description}</p>}
-                            <p><b>Статус:</b> {statusLabels[c.status]}</p>
                             <p><small>Створено: {new Date(c.creationDate).toLocaleString()}</small></p>
 
                             <div style={{marginTop: "0.5rem", display: "flex", gap: "0.5rem", flexWrap: "wrap"}}>
@@ -542,7 +541,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                             ×
                         </button>
 
-                        <PostCard post={popupPost} isForModerator={false} />
+                        <PostCard post={popupPost} isForUsers={false} />
                     </div>
                 </div>
             )}
@@ -590,7 +589,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                         </button>
 
                         <CommentItem
-                            id={popupComment.commentId}
+                            id={popupComment.id}
                             authorId = {popupComment.authorId}
                             authorName ={popupComment.authorName}
                             authorProfileImage = {popupComment.authorProfileImage}
@@ -598,6 +597,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                             creationDate = {popupComment.creationDate}
                             onReport = {popupComment.onReport}
                             isForModerator = {true}
+                            status={popupComment.status}
                         />
                     </div>
                 </div>

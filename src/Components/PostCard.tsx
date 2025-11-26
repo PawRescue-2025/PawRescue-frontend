@@ -5,6 +5,9 @@ import CommentViewModel from "../ViewModels/CommentViewModel";
 import UserViewModel from "../ViewModels/UserViewModel";
 import ComplaintForm from "./AddComplaintForm";
 import CommentItem from "./CommentItem";
+import PostViewModel from "../ViewModels/PostViewModel";
+import { ActivityStatus } from "../Enums/ActivityStatus";
+
 
 interface Post {
     id: number;
@@ -19,6 +22,7 @@ interface Post {
     contactLink?: string;
     photos?: string[];
     userId: string;
+    status: number;
     author?: {
         fullName: string;
         profileImage: string | null;
@@ -32,11 +36,12 @@ interface Comment {
     authorProfileImage: string | null;
     content: string;
     creationDate: string;
+    status: number;
 }
 
 interface PostCardProps {
     post: Post;
-    isForModerator: boolean;
+    isForUsers: boolean;
 }
 
 const postTypeLabels: { [key in PostType]: string } = {
@@ -53,11 +58,14 @@ const postTypeLabels: { [key in PostType]: string } = {
 };
 const commentVM = new CommentViewModel();
 const userVM = new UserViewModel();
+const postVM = new PostViewModel();
 
-const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
+
+const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
     const [activePhotoIndex, setActivePhotoIndex] = useState(0);
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
+    const [statusLable, setStatusLable] = useState(post.status === 1 ? "Розблокувати" : "Заблокувати");
 
     const [isComplaintOpen, setIsComplaintOpen] = useState(false);
     const [commentComplaint, setCommentComplaint] = useState<{
@@ -68,8 +76,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
         commentId: null
     });
     const [showAllComments, setShowAllComments] = useState(false);
-
-
 
     const fetchComments = async () => {
         try {
@@ -101,6 +107,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
         fetchComments();
     }, []);
 
+
     const handleAddComment = async () => {
         if (!newComment.trim()) return;
         try {
@@ -123,9 +130,27 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
         setActivePhotoIndex((prev) => (prev - 1 + post.photos!.length) % post.photos!.length);
     };
 
+    const handleBlockPost = async () => {
+        try {
+            if (post.status === 1){
+                await postVM.editPostStatus(post.id, ActivityStatus.Active);
+                alert("Публікацію розблоковано.");
+                setStatusLable("Заблокувати")
+            }else{
+                await postVM.editPostStatus(post.id, ActivityStatus.Blocked);
+                alert("Публікацію заблоковано.");
+                setStatusLable("Розблокувати")
+            }
+
+        } catch (e) {
+            console.error("Помилка блокування:", e);
+            alert("Не вдалося заблокувати публікацію.");
+        }
+    };
+
     return (
         <div className="post-card">
-            {isForModerator && <button
+            {isForUsers && <button
                 className="report-btn"
                 onClick={() => setIsComplaintOpen(true)}
                 style={{
@@ -255,7 +280,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
             {post.eventDate && <p><b>Дата події:</b> {new Date(post.eventDate).toLocaleString()}</p>}
             <small>{new Date(post.creationDate).toLocaleDateString()}</small>
 
-            {isForModerator &&
+            {isForUsers &&
                 <div style={{marginTop: "1rem", borderTop: "1px solid #ccc", paddingTop: "1rem", width: "100%"}}>
                     <h5>Коментарі</h5>
                     {comments.length === 0 && <p>Немає коментарів</p>}
@@ -276,6 +301,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
                                 })
                             }
                             isForModerator={false}
+                            status={comment.status}
                         />
                     ))}
                         <button
@@ -318,6 +344,24 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
                     </div>
                 </div>
             }
+            {!isForUsers && (
+                <div style={{ display: "flex", gap: "10px", position: "relative", bottom: "-10px", left: "-10px" }}>
+                    <button
+                        onClick={handleBlockPost}
+                        style={{
+                            padding: "6px 12px",
+                            background: "#d9534f",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "6px",
+                            cursor: "pointer",
+                            fontWeight: 600
+                        }}
+                    >
+                        {statusLable}
+                    </button>
+                </div>
+            )}
 
 
             <ComplaintForm

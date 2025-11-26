@@ -1,5 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {DEFAULT_PROFILE_PICTURE_URL} from "../config/constants";
+import CommentViewModel from "../ViewModels/CommentViewModel";
+import { ActivityStatus } from "../Enums/ActivityStatus";
+
 
 interface CommentItemProps {
     id: number,
@@ -10,7 +13,9 @@ interface CommentItemProps {
     creationDate: string,
     onReport: (id: number) => void,
     isForModerator: boolean,
+    status: number
 }
+const commentVM = new CommentViewModel();
 
 const CommentItem: React.FC<CommentItemProps> = ({
                                                      id,
@@ -20,8 +25,32 @@ const CommentItem: React.FC<CommentItemProps> = ({
                                                      content,
                                                      creationDate,
                                                      onReport,
-                                                     isForModerator
-}) => {
+                                                     isForModerator,
+                                                     status}) => {
+
+    const [statusLabel, setStatusLabel] = useState(
+        status === 1 ? "Розблокувати" : "Заблокувати"
+    );
+
+
+    const handleBlockComment = async () => {
+        try {
+            if (status === 1) {
+                await commentVM.editCommentStatus(id, ActivityStatus.Active);
+                alert("Коментар розблоковано.");
+                setStatusLabel("Заблокувати");
+            } else {
+                await commentVM.editCommentStatus(id, ActivityStatus.Blocked);
+                alert("Коментар заблоковано.");
+                setStatusLabel("Розблокувати");
+            }
+        } catch (e) {
+            console.error("Помилка блокування коментаря:", e);
+            alert("Не вдалося заблокувати коментар.");
+        }
+    };
+
+
     return (
         <div
             style={{
@@ -54,6 +83,23 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 </div>
                 <p style={{margin: 0}}>{content}</p>
             </div>
+            {isForModerator && (
+                <button
+                    onClick={handleBlockComment}
+                    style={{
+                        padding: "6px 10px",
+                        background: "#d9534f",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontSize: "0.85rem",
+                        height: "32px"
+                    }}
+                >
+                    {statusLabel}
+                </button>
+            )}
 
             {!isForModerator &&
             <button
