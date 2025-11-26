@@ -14,7 +14,7 @@ export default class ComplaintViewModel extends BaseViewModel {
     // - status = active
     // - одне з userId, postId або commentId має бути обов'язково (перевірка на фронті)
     async addComplaint(
-        id: string,
+        complainantId: string,
         category: ComplaintCategory,
         userId?: string | null,
         postId?: number | null,
@@ -22,7 +22,7 @@ export default class ComplaintViewModel extends BaseViewModel {
         description?: string | null
     ): Promise<any> {
         const body = {
-            id,
+            complainantId,
             userId,
             postId,
             commentId,

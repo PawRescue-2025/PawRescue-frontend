@@ -4,6 +4,7 @@ import { DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
 import CommentViewModel from "../ViewModels/CommentViewModel";
 import UserViewModel from "../ViewModels/UserViewModel";
 import ComplaintForm from "./AddComplaintForm";
+import CommentItem from "./CommentItem";
 
 interface Post {
     id: number;
@@ -32,6 +33,7 @@ interface Comment {
     content: string;
     creationDate: string;
 }
+
 interface PostCardProps {
     post: Post;
     isForModerator: boolean;
@@ -60,13 +62,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
     const [isComplaintOpen, setIsComplaintOpen] = useState(false);
     const [commentComplaint, setCommentComplaint] = useState<{
         open: boolean;
-        commentId: number | null;
-        userId: string | null;
+        commentId: number | null
     }>({
         open: false,
-        commentId: null,
-        userId: null
+        commentId: null
     });
+    const [showAllComments, setShowAllComments] = useState(false);
+
 
 
     const fetchComments = async () => {
@@ -175,11 +177,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
             </div>
 
             <ComplaintForm
+                complainantId={String(localStorage.getItem("userId"))}
                 isOpen={isComplaintOpen}
                 onClose={() => setIsComplaintOpen(false)}
                 targetType="post"
                 postId={post.id}
-                reportedUserId={post.userId}
             />
 
             <div className="post-header">
@@ -257,59 +259,39 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
                 <div style={{marginTop: "1rem", borderTop: "1px solid #ccc", paddingTop: "1rem", width: "100%"}}>
                     <h5>Коментарі</h5>
                     {comments.length === 0 && <p>Немає коментарів</p>}
-                    {comments.map(comment => (
-                        <div
+
+                    {comments.slice(0, showAllComments ? comments.length : 2).map(comment => (
+                        <CommentItem
                             key={comment.id}
+                            id={comment.id}
+                            authorId={comment.authorId}
+                            authorName={comment.authorName}
+                            authorProfileImage={comment.authorProfileImage}
+                            content={comment.content}
+                            creationDate={comment.creationDate}
+                            onReport={(id) =>
+                                setCommentComplaint({
+                                    open: true,
+                                    commentId: id
+                                })
+                            }
+                            isForModerator={false}
+                        />
+                    ))}
+                        <button
+                            onClick={() => setShowAllComments(!showAllComments)}
                             style={{
-                                display: "flex",
-                                gap: "10px",
-                                alignItems: "flex-start",
-                                marginBottom: "12px",
-                                padding: "8px",
-                                borderRadius: "10px",
-                                backgroundColor: "rgba(249,249,249,0.5)"
+                                background: "transparent",
+                                border: "none",
+                                color: "#3fb573",
+                                cursor: "pointer",
+                                marginTop: "8px",
+                                fontWeight: "600"
                             }}
                         >
-                            <img
-                                src={comment.authorProfileImage || DEFAULT_PROFILE_PICTURE_URL}
-                                alt={comment.authorName}
-                                style={{
-                                    width: "40px",
-                                    height: "40px",
-                                    borderRadius: "50%",
-                                    objectFit: "cover",
-                                    border: "1px solid #ccc"
-                                }}
-                            />
-                            <div style={{flex: 1}}>
-                                <div style={{display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px"}}>
-                                    <strong>{comment.authorName}</strong>
-                                    <small style={{color: "#888", fontSize: "12px"}}>
-                                        {new Date(comment.creationDate).toLocaleString()}
-                                    </small>
-                                </div>
-                                <p style={{margin: 0}}>{comment.content}</p>
-                            </div>
-                            <button
-                                style={{
-                                    background: "transparent",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    fontSize: "1.2rem"
-                                }}
-                                onClick={() => {
-                                    setCommentComplaint({
-                                        open: true,
-                                        commentId: comment.id,
-                                        userId: comment.authorId
-                                    });
-                                }}
-                            >
-                                ⚠
-                            </button>
-                        </div>
-
-                    ))}
+                            {comments.length > 2 && !showAllComments ? "Переглянути всі коментарі" : "" }
+                            {comments.length > 0 && showAllComments ? "Сховати коментарі" : "" }
+                        </button>
 
                     <div style={{marginTop: "0.5rem", display: "flex", gap: "0.5rem"}}>
                         <input
@@ -337,12 +319,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForModerator}) => {
                 </div>
             }
 
+
             <ComplaintForm
+                complainantId={String(localStorage.getItem("userId"))}
                 isOpen={commentComplaint.open}
-                onClose={() => setCommentComplaint({open: false, commentId: null, userId: null})}
+                onClose={() => setCommentComplaint({open: false, commentId: null})}
                 targetType="comment"
                 commentId={commentComplaint.commentId!}
-                reportedUserId={commentComplaint.userId!}
             />
         </div>
     );

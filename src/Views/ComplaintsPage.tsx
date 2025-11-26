@@ -5,11 +5,15 @@ import { ComplaintCategory } from "../Enums/ComplaintCategory";
 import UserViewModel from "../ViewModels/UserViewModel";
 import PostViewModel from "../ViewModels/PostViewModel";
 import PostCard from "../Components/PostCard";
+import CommentItem from "../Components/CommentItem";
+import CommentViewModel from "../ViewModels/CommentViewModel";
+
 
 
 const postVM = new PostViewModel();
 const complaintVM = new ComplaintViewModel();
 const userVM = new UserViewModel();
+const commentVM = new CommentViewModel();
 
 interface Complaint {
     id: number;
@@ -44,8 +48,6 @@ const ModeratorComplaintsPage: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState<ComplaintCategory | -1>(-1);
     const [activeStatus, setActiveStatus] = useState<ComplaintStatus | -1>(-1);
     const [search, setSearch] = useState("");
-
-    const [expandedPosts, setExpandedPosts] = useState<{ [key: number]: boolean }>({});
 
     const [popupPost, setPopupPost] = useState<any | null>(null);
 
@@ -111,8 +113,49 @@ const ModeratorComplaintsPage: React.FC = () => {
         }
     };
 
+    const [commentCache, setCommentCache] = useState<{ [key: number]: any }>({});
+    const [popupComment, setPopupComment] = useState<any | null>(null);
 
+    const openCommentPopup = async (commentId: number) => {
+        if (commentCache[commentId]) {
+            setPopupComment(commentCache[commentId]);
+            return;
+        }
 
+        try {
+            const comment = await commentVM.getCommentById(commentId);
+
+            let author;
+            try {
+                const user = await userVM.getUserById(comment.authorId);
+                author = {
+                    authorName: user.fullName,
+                    authorProfileImage: user.profileImage
+                };
+            } catch {
+                author = {
+                    authorName: "Користувач",
+                    authorProfileImage: null
+                };
+            }
+
+            const commentData = {
+                id: comment.id,
+                authorId: comment.authorId,
+                authorName: author.authorName,
+                authorProfileImage: author.authorProfileImage,
+                content: comment.content,
+                creationDate: comment.creationDate,
+                onReport: comment.onReport,
+            };
+
+            setCommentCache(prev => ({ ...prev, [commentId]: commentData }));
+            setPopupComment(commentData);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const fetchComplaints = async () => {
         setLoading(true);
@@ -121,6 +164,7 @@ const ModeratorComplaintsPage: React.FC = () => {
             const data = await complaintVM.getAllComplaints();
             data.sort((a: { id: number; }, b: { id: number; }) => b.id - a.id);
             setComplaints(data);
+            console.log(data)
         } catch (err: any) {
             setError(err.message || "Помилка при завантаженні скарг");
         } finally {
@@ -369,9 +413,10 @@ const ModeratorComplaintsPage: React.FC = () => {
                             </button>
 
                             <p><b>Скарга ID:</b> {c.id}</p>
+
                             {c.complainantId && (
                                 <p>
-                                    <b>Коментатор:</b>{" "}
+                                    <b>Користувач, що поскаржився:</b>{" "}
                                     <span
                                         style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
                                         onMouseEnter={(e) => loadUser(c.complainantId!, e.clientX, e.clientY)}
@@ -386,9 +431,10 @@ const ModeratorComplaintsPage: React.FC = () => {
                                      </span>
                                 </p>
                             )}
+
                             {c.userId && (
                                 <p>
-                                    <b>Користувач, що поскаржився:</b>{" "}
+                                    <b>Користувач, на якого поскаржились</b>{" "}
                                     <span
                                         style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
                                         onMouseEnter={(e) => loadUser(c.userId!, e.clientX, e.clientY)}
@@ -403,6 +449,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                                      </span>
                                 </p>
                             )}
+
                             {c.postId && (
                                 <p>
                                     <b>Пост, на який поскаржились:</b>{" "}
@@ -416,7 +463,18 @@ const ModeratorComplaintsPage: React.FC = () => {
                             )}
 
 
-                            {c.commentId && <p><b>Коментар:</b> {c.commentId}</p>}
+                            {c.commentId && (
+                                <p>
+                                    <b>Коментар, на який поскаржились:</b>{" "}
+                                    <button
+                                        onClick={() => openCommentPopup(c.commentId!)}
+                                        style={{ background: "transparent", border: "none", color: "#0645ad" }}
+                                    >
+                                        {c.commentId}
+                                    </button>
+                                </p>
+                            )}
+
                             <p><b>Категорія:</b> {categoryLabels[c.category]}</p>
                             {c.description && <p><b>Опис:</b> {c.description}</p>}
                             <p><b>Статус:</b> {statusLabels[c.status]}</p>
@@ -488,6 +546,63 @@ const ModeratorComplaintsPage: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {popupComment && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        background: "rgba(0,0,0,0.45)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 99999
+                    }}
+                    onClick={() => setPopupComment(null)}
+                >
+                    <div
+                        style={{
+                            background: "linear-gradient(135deg, #a8e9d3 0%, #76c9a7 50%)",
+                            borderRadius: "20px",
+                            padding: "3rem",
+                            width: "40%",
+                            position: "relative",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setPopupComment(null)}
+                            style={{
+                                position: "absolute",
+                                top: "10px",
+                                right: "15px",
+                                border: "none",
+                                background: "transparent",
+                                fontSize: "2rem",
+                                cursor: "pointer",
+                                color: "#444",
+                            }}
+                        >
+                            ×
+                        </button>
+
+                        <CommentItem
+                            id={popupComment.commentId}
+                            authorId = {popupComment.authorId}
+                            authorName ={popupComment.authorName}
+                            authorProfileImage = {popupComment.authorProfileImage}
+                            content = {popupComment.content}
+                            creationDate = {popupComment.creationDate}
+                            onReport = {popupComment.onReport}
+                            isForModerator = {true}
+                        />
+                    </div>
+                </div>
+            )}
+
 
 
         </div>

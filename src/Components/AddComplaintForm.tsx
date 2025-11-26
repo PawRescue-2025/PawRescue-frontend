@@ -4,6 +4,7 @@ import {ComplaintCategory} from "../Enums/ComplaintCategory";
 import ReactDOM from "react-dom";
 
 interface ComplaintFormProps {
+    complainantId: string;
     isOpen: boolean;
     onClose: () => void;
     targetType: "post" | "comment";
@@ -23,6 +24,7 @@ const complaintLabels: { [key in ComplaintCategory]: string } = {
 const complaintVM = new ComplaintViewModel();
 
 const ComplaintForm: React.FC<ComplaintFormProps> = ({
+                                                         complainantId,
                                                          isOpen,
                                                          onClose,
                                                          targetType,
@@ -36,7 +38,6 @@ const ComplaintForm: React.FC<ComplaintFormProps> = ({
     const [description, setDescription] = useState("");
 
     const handleSend = async () => {
-        const complainantId = localStorage.getItem("userId");
         if (!complainantId) {
             alert("Не вдалося визначити користувача");
             return;
