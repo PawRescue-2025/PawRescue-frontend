@@ -59,7 +59,18 @@ const UserProfilePage: React.FC = () => {
         setUser(userData);
 
         const postsData = await postVM.getPostsByUser(userId);
-        setPosts(postsData);
+        const postsWithAuthors = await Promise.all(
+            postsData.map(async (post: any) => {
+                try {
+                    const author = await userVM.getUserById(post.userId);
+                    return {...post, author: { fullName: author.fullName, profileImage: author.profileImageUrl || null,},};
+                } catch {
+                    return {...post, author: { fullName: "Невідомий користувач", profileImage: null,},};
+                }
+            })
+        );
+
+        setPosts(postsWithAuthors);
 
         const userPoints = await userVM.getUserPointsNumber(userId);
         setPoints(userPoints);
@@ -350,7 +361,7 @@ const UserProfilePage: React.FC = () => {
                     {filteredPosts.length === 0 ? (
                         <p className="text-muted">Постів немає</p>
                     ) : (
-                        filteredPosts.map(p => <PostCard key={p.id} post={p} isForModerator={true} />)
+                        filteredPosts.map(p => <PostCard key={p.id} post={p} isForUsers={true} />)
                     )}
                 </div>
 

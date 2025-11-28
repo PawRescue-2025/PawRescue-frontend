@@ -24,11 +24,14 @@ export default function LoginPage() {
     const handleLogin = async () => {
         try {
             const result = await authVM.logIn(email, password);
-            if (userRole === UserType.Moderator) {
+
+            if (result.user.roles[0] === "Moderator") {
                 navigate("/complaints");
             }else{
                 navigate("/main");
             }
+
+            console.log(result);
         } catch (error: any) {
             alert(error?.message || "Login failed");
         }
@@ -36,6 +39,7 @@ export default function LoginPage() {
 
     const handleSignUp = async () => {
         try {
+            console.log(userRole);
             if (userRole === null) {
                 alert("Будь ласка, оберіть роль.");
                 return;
@@ -60,6 +64,8 @@ export default function LoginPage() {
                     photo,
                     description
                 );
+                console.log(result);
+
             } else {
                 if (documents.length === 0) {
                     alert("Для даних ролей необхідно завантажити документи.");
@@ -76,6 +82,8 @@ export default function LoginPage() {
                     photo,
                     description
                 );
+                console.log(result);
+
             }
 
             await authVM.logIn(email, password);
@@ -85,6 +93,7 @@ export default function LoginPage() {
             } else {
                 navigate("/main");
             }
+
         } catch (error: any) {
             alert(error?.message || "Помилка під час реєстрації");
         }

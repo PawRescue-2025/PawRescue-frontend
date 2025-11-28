@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, {use, useEffect, useState} from "react";
 import { NavLink } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
 import UserViewModel from "../ViewModels/UserViewModel";
@@ -8,12 +8,23 @@ let userVM = new UserViewModel();
 const MenuBar: React.FC = () => {
 
     const [userRole, setUserRole] = useState<number>();
+    const [userId, setUserId] = useState<string>();
+    const [shelterId, setShelterId] = useState<string>();
 
     const loadUser = async () => {
         try {
             let userId = localStorage.getItem("userId");
+            setUserId(String(userId))
             let res  = await userVM.getUserById(String(userId))
             setUserRole(Number(res.status))
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const loadShelter = async () => {
+        try {
+           //TODO
         } catch (err) {
             console.error(err);
         }
@@ -38,11 +49,12 @@ const MenuBar: React.FC = () => {
                 zIndex: 1000,
                 display: "flex",
                 gap: "1rem",
-                fontWeight: 600
+                fontWeight: 600,
+                width: "90%"
             }}
         >
 
-            <div style={{width: '150px'}}>
+            <div style={{width: '20%'}}>
             </div>
 
             <NavLink
@@ -89,8 +101,33 @@ const MenuBar: React.FC = () => {
                 Корисні посилання
             </NavLink>
 
-            <div style={{width: '100px'}}>
-            </div>
+            <NavLink
+                to={`/profile/${userId}`}
+                style={({isActive}) => ({
+                    textDecoration: "none",
+                    padding: "0.4rem 0.8rem",
+                    borderRadius: "10px",
+                    color: isActive ? "black" : "#333",
+                    background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                    transition: "0.3s"
+                })}
+            >
+                Мій профіль
+            </NavLink>
+
+            <NavLink
+                to={`/shelter/${shelterId}`}
+                style={({isActive}) => ({
+                    textDecoration: "none",
+                    padding: "0.4rem 0.8rem",
+                    borderRadius: "10px",
+                    color: isActive ? "black" : "#333",
+                    background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                    transition: "0.3s"
+                })}
+            >
+                Притулок
+            </NavLink>
 
             <div>
                 <LogoutButton/>

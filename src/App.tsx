@@ -8,6 +8,8 @@ import AddShelterPage from "./Views/AddShelterPage";
 import MainPostsPage from "./Views/MainPostsPage";
 import ModeratorComplaintsPage from "./Views/ComplaintsPage";
 import MenuBar from "./Components/MenuBar";
+import ShelterPage from "./Views/ShelterPage";
+import UserProfilePage from "./Views/UserPage";
 
 function AppWrapper() {
     const location = useLocation();
@@ -26,6 +28,9 @@ function AppWrapper() {
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/useful-links" element={<UsefulLinkPage />} />
                 <Route path="/add-shelter" element={<AddShelterPage />} />
+                <Route path="/profile/:userId" element={<UserProfilePage />} />
+                <Route path="/shelter" element={<ShelterPage />} />
+
             </Routes>
         </>
     );
