@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import ComplaintViewModel from "../ViewModels/ComplaintViewModel";
 import { ComplaintStatus } from "../Enums/ComplaintStatus";
 import { ComplaintCategory } from "../Enums/ComplaintCategory";
@@ -41,6 +42,7 @@ const statusLabels: { [key in ComplaintStatus]: string } = {
 };
 
 const ModeratorComplaintsPage: React.FC = () => {
+    const navigate = useNavigate();
     const [complaints, setComplaints] = useState<Complaint[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -419,13 +421,7 @@ const ModeratorComplaintsPage: React.FC = () => {
                                     <b>Користувач, що поскаржився:</b>{" "}
                                     <span
                                         style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
-                                        onMouseEnter={(e) => loadUser(c.complainantId!, e.clientX, e.clientY)}
-                                        onMouseMove={(e) => setHoveredUser(prev => prev ? {
-                                            ...prev,
-                                            x: e.clientX,
-                                            y: e.clientY
-                                        } : prev)}
-                                        onMouseLeave={() => setHoveredUser(null)}
+                                        onClick={() => navigate(`/profile/${c.complainantId}`)}
                                     >
                                     {c.complainantId}
                                      </span>
@@ -434,17 +430,10 @@ const ModeratorComplaintsPage: React.FC = () => {
 
                             {c.userId && (
                                 <p>
-                                    <b>Користувач, на якого поскаржились</b>{" "}
+                                    <b>Користувач, на якого поскаржились: </b>{" "}
                                     <span
-                                        style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}
-                                        onMouseEnter={(e) => loadUser(c.userId!, e.clientX, e.clientY)}
-                                        onMouseMove={(e) => setHoveredUser(prev => prev ? {
-                                            ...prev,
-                                            x: e.clientX,
-                                            y: e.clientY
-                                        } : prev)}
-                                        onMouseLeave={() => setHoveredUser(null)}
-                                    >
+                                        onClick={() => navigate(`/profile/${c.userId}`)}
+                                        style={{textDecoration: "underline", cursor: "pointer", color: "#0645ad"}}>
                                     {c.userId}
                                      </span>
                                 </p>

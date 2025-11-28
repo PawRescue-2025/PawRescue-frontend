@@ -18,7 +18,8 @@ interface NewPostData {
 interface CreatePostModalProps {
     show: boolean;
     onClose: () => void;
-    onSubmit: () => void
+    onSubmit: () => void;
+    userType: number;
 }
 
 const postTypeLabels: { [key in PostType]: string } = {
@@ -33,7 +34,43 @@ const postTypeLabels: { [key in PostType]: string } = {
     [PostType.Story]: "Історії",
     [PostType.Event]: "Події",
 };
-const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubmit}) => {
+
+const allowedTypesByRole: Record<number, PostType[]> = {
+    0: [
+        PostType.Lost,
+        PostType.Found,
+        PostType.Useful,
+        PostType.Story,
+        PostType.Event
+    ],
+
+    1: [
+        PostType.Lost,
+        PostType.Found,
+        PostType.Useful,
+        PostType.Story,
+        PostType.Event,
+        PostType.FinancialHelp,
+        PostType.MaterialHelp,
+        PostType.VolunteerHelp,
+        PostType.Adoption,
+        PostType.Fostering
+    ],
+
+    2: [
+        PostType.Lost,
+        PostType.Found,
+        PostType.Useful,
+        PostType.Story,
+        PostType.Event,
+        PostType.FinancialHelp,
+        PostType.MaterialHelp,
+        PostType.VolunteerHelp
+    ]
+};
+
+
+const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubmit, userType}) => {
     const [newPost, setNewPost] = useState<NewPostData>({
         type: "",
         title: "",
@@ -45,6 +82,22 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubm
         contactEmail: "",
         contactLink: "",
     });
+
+    const numericPostTypes = Object.values(PostType)
+        .filter((v): v is PostType => typeof v === "number");
+
+    const getFilteredPostTypes = (userType: number) => {
+        const allowed = allowedTypesByRole[userType] ?? numericPostTypes;
+
+        return Object.fromEntries(
+            allowed.map(pt => [pt, postTypeLabels[pt]])
+        );
+    };
+
+
+    const filteredLabels = getFilteredPostTypes(userType);
+
+
 
     if (!show) return null;
 
@@ -190,11 +243,14 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubm
                             required
                         >
                             <option value="">Оберіть тип</option>
-                            {Object.values(PostType)
-                                .filter(v => typeof v === "number")
+                            {numericPostTypes
+                                .filter(pt => filteredLabels.hasOwnProperty(pt))
                                 .map(pt => (
-                                    <option key={pt} value={pt}>{postTypeLabels[pt as PostType]}</option>
+                                    <option key={pt} value={pt}>
+                                        {filteredLabels[pt]}
+                                    </option>
                                 ))}
+
                         </select>
                     </div>
 

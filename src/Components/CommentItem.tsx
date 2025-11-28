@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {DEFAULT_PROFILE_PICTURE_URL} from "../config/constants";
 import CommentViewModel from "../ViewModels/CommentViewModel";
 import { ActivityStatus } from "../Enums/ActivityStatus";
+import {useNavigate} from "react-router-dom";
 
 
 interface CommentItemProps {
@@ -27,6 +28,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
                                                      onReport,
                                                      isForModerator,
                                                      status}) => {
+
+    const navigate = useNavigate();
 
     const [statusLabel, setStatusLabel] = useState(
         status === 1 ? "Розблокувати" : "Заблокувати"
@@ -73,6 +76,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     objectFit: "cover",
                     border: "1px solid #ccc"
                 }}
+                onClick={() => navigate(`/profile/${authorId}`)}
             />
             <div style={{flex: 1}}>
                 <div style={{display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px"}}>

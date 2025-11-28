@@ -51,6 +51,19 @@ const MainPostsPage: React.FC = () => {
     const [search, setSearch] = useState("");
     const [filterType, setFilterType] = useState<PostType | "">("");
 
+    const [userRole, setUserRole] = useState<number>();
+
+    const loadUser = async () => {
+        try {
+            let userId = localStorage.getItem("userId");
+            let res  = await userVM.getUserById(String(userId))
+            setUserRole(res.role)
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
     const fetchPosts = async () => {
         setLoading(true);
         setError(null);
@@ -93,6 +106,7 @@ const MainPostsPage: React.FC = () => {
 
     useEffect(() => {
         fetchPosts();
+        loadUser()
     }, [page]);
 
     const filteredPosts = posts
@@ -297,6 +311,7 @@ const MainPostsPage: React.FC = () => {
                 show={showNewPostForm}
                 onClose={() => setShowNewPostForm(false)}
                 onSubmit={() => handleSubmitAddForm()}
+                userType={Number(userRole)}
             />
         </div>
     );

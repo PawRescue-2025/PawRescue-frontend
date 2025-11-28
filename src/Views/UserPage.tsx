@@ -383,6 +383,7 @@ const UserProfilePage: React.FC = () => {
                 show={showNewPostForm}
                 onClose={() => setShowNewPostForm(false)}
                 onSubmit={() => handleSubmitAddForm()}
+                userType={user.role}
             />
 
         </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { PostType } from "../Enums/PostType";
 import { DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
 import CommentViewModel from "../ViewModels/CommentViewModel";
@@ -62,6 +63,7 @@ const postVM = new PostViewModel();
 
 
 const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
+    const navigate = useNavigate();
     const [activePhotoIndex, setActivePhotoIndex] = useState(0);
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
@@ -168,7 +170,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
             </button>
             }
 
-            <div className="post-header">
+            <div className="post-header"
+                 onClick={() => navigate(`/profile/${post.userId}`)}>
                 <div style={{
                     display: "flex",
                     alignItems: "center",

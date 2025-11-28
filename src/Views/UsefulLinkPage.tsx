@@ -54,7 +54,7 @@ const UsefulLinksPage: React.FC = () => {
         try {
             let userId = localStorage.getItem("userId");
             let res  = await userVM.getUserById(String(userId))
-            setUserRole(Number(res.status))
+            setUserRole(Number(res.role))
         } catch (err) {
             console.error(err);
         }

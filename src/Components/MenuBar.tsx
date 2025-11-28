@@ -16,7 +16,7 @@ const MenuBar: React.FC = () => {
             let userId = localStorage.getItem("userId");
             setUserId(String(userId))
             let res  = await userVM.getUserById(String(userId))
-            setUserRole(Number(res.status))
+            setUserRole(Number(res.role))
         } catch (err) {
             console.error(err);
         }
@@ -24,7 +24,7 @@ const MenuBar: React.FC = () => {
 
     const loadShelter = async () => {
         try {
-           //TODO
+           //TODO: add func to load shelter by owner id
         } catch (err) {
             console.error(err);
         }
@@ -50,12 +50,10 @@ const MenuBar: React.FC = () => {
                 display: "flex",
                 gap: "1rem",
                 fontWeight: 600,
-                width: "90%"
+                width: "90%",
+                justifyContent: "center",
             }}
         >
-
-            <div style={{width: '20%'}}>
-            </div>
 
             <NavLink
                 to="/main"
@@ -71,7 +69,7 @@ const MenuBar: React.FC = () => {
                 Головна
             </NavLink>
 
-            {/*{userRole === 3 &&*/}
+            {userRole === 3 &&
             <NavLink
                 to="/complaints"
                 style={({isActive}) => ({
@@ -85,7 +83,7 @@ const MenuBar: React.FC = () => {
             >
                 Скарги
             </NavLink>
-            {/*}*/}
+            }
 
             <NavLink
                 to="/useful-links"
@@ -101,7 +99,8 @@ const MenuBar: React.FC = () => {
                 Корисні посилання
             </NavLink>
 
-            <NavLink
+            {userRole !== 3 &&
+                <NavLink
                 to={`/profile/${userId}`}
                 style={({isActive}) => ({
                     textDecoration: "none",
@@ -114,8 +113,10 @@ const MenuBar: React.FC = () => {
             >
                 Мій профіль
             </NavLink>
+            }
 
-            <NavLink
+            {userRole === 1 &&
+                <NavLink
                 to={`/shelter/${shelterId}`}
                 style={({isActive}) => ({
                     textDecoration: "none",
@@ -128,6 +129,7 @@ const MenuBar: React.FC = () => {
             >
                 Притулок
             </NavLink>
+            }
 
             <div>
                 <LogoutButton/>
