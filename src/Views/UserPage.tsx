@@ -14,7 +14,7 @@ import ComplaintForm from "../Components/AddComplaintForm";
 
 
 import { PostType } from "../Enums/PostType";
-import CreatePostModal from "../Components/CreatePostModal";
+import AddPostModal from "../Components/AddPostModal";
 
 const userVM = new UserViewModel();
 const postVM = new PostViewModel();
@@ -63,7 +63,7 @@ const UserProfilePage: React.FC = () => {
             postsData.map(async (post: any) => {
                 try {
                     const author = await userVM.getUserById(post.userId);
-                    return {...post, author: { fullName: author.fullName, profileImage: author.profileImageUrl || null,},};
+                    return {...post, author: { fullName: author.fullName, profileImage: author.photo || null,},};
                 } catch {
                     return {...post, author: { fullName: "Невідомий користувач", profileImage: null,},};
                 }
@@ -379,7 +379,7 @@ const UserProfilePage: React.FC = () => {
                 reportedUserId={userId!}
                 onSuccess={() => alert("Скарга відправлена")}
             />
-            <CreatePostModal
+            <AddPostModal
                 show={showNewPostForm}
                 onClose={() => setShowNewPostForm(false)}
                 onSubmit={() => handleSubmitAddForm()}

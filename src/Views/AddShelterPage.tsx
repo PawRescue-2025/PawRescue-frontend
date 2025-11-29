@@ -50,6 +50,45 @@ export default function AddShelterPage() {
         }
     };
 
+    const [locationQuery, setLocationQuery] = useState("");
+    const [locationResults, setLocationResults] = useState<{ display_name: string }[]>([]);
+    const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+
+    const searchLocations = async (query: string) => {
+        if (!query || query.length < 2) {
+            setLocationResults([]);
+            return;
+        }
+
+        setIsLoadingLocations(true);
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&countrycodes=ua&q=${encodeURIComponent(query)}`
+            );
+            const data = await res.json();
+            setLocationResults(data);
+            console.log(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoadingLocations(false);
+        }
+    };
+
+    const [locationTimeout, setLocationTimeout] = useState<any>(null);
+
+    const handleLocationInput = (value: string) => {
+        setLocationQuery(value);
+
+        if (locationTimeout) clearTimeout(locationTimeout);
+
+        setLocationTimeout(
+            setTimeout(() => {
+                searchLocations(value);
+            }, 300)
+        );
+    };
+
     return (
         <div
             className="d-flex justify-content-center align-items-center vh-100 position-relative"
@@ -180,14 +219,55 @@ export default function AddShelterPage() {
                     />
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-3" style={{position: "relative"}}>
                     <label>Локація</label>
                     <input
                         className="form-control input-glass"
-                        value={locationText}
-                        onChange={e => setLocationText(e.target.value)}
-                        placeholder="Місто, адреса..."
+                        value={locationQuery}
+                        onChange={(e) => handleLocationInput(e.target.value)}
+                        placeholder="Почніть вводити назву міста або села..."
                     />
+
+                    {isLoadingLocations && (
+                        <div style={{padding: "8px", fontSize: "0.9rem"}}>
+                            Завантаження...
+                        </div>
+                    )}
+
+                    {locationResults.length > 0 && (
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: "100%",
+                                left: 0,
+                                right: 0,
+                                background: "white",
+                                borderRadius: "8px",
+                                boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
+                                zIndex: 9999,
+                                maxHeight: "250px",
+                                overflowY: "auto"
+                            }}
+                        >
+                            {locationResults.map((loc, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => {
+                                        setLocationText(loc.display_name)
+                                        setLocationQuery(loc.display_name);
+                                        setLocationResults([]);
+                                    }}
+                                    style={{
+                                        padding: "10px 12px",
+                                        cursor: "pointer",
+                                        borderBottom: "1px solid #eee"
+                                    }}
+                                >
+                                    {loc.display_name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <h5

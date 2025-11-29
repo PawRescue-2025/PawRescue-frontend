@@ -4,6 +4,7 @@ import { PostType } from "../Enums/PostType";
 import { DEFAULT_PROFILE_PICTURE_URL } from "../config/constants";
 import CommentViewModel from "../ViewModels/CommentViewModel";
 import UserViewModel from "../ViewModels/UserViewModel";
+import ReportViewModel from "../ViewModels/ReportViewModel";
 import ComplaintForm from "./AddComplaintForm";
 import CommentItem from "./CommentItem";
 import PostViewModel from "../ViewModels/PostViewModel";
@@ -60,6 +61,7 @@ const postTypeLabels: { [key in PostType]: string } = {
 const commentVM = new CommentViewModel();
 const userVM = new UserViewModel();
 const postVM = new PostViewModel();
+const reportVM = new ReportViewModel();
 
 
 const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
@@ -79,6 +81,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
     });
     const [showAllComments, setShowAllComments] = useState(false);
 
+
     const fetchComments = async () => {
         try {
             const data = await commentVM.getCommentsByPost(post.id);
@@ -88,7 +91,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                     return {
                         ...c,
                         authorName: user.fullName || "Користувач",
-                        authorProfileImage: user.profileImage || DEFAULT_PROFILE_PICTURE_URL
+                        authorProfileImage: user.photo || DEFAULT_PROFILE_PICTURE_URL
                     };
                 } catch {
                     return {
@@ -275,12 +278,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
 
             <h5>{post.content || "(немає контенту)"}</h5>
             {post.location && <p><b>Локація:</b> {post.location}</p>}
+            {post.eventDate && <p><b>Дата події:</b> {new Date(post.eventDate).toLocaleString()}</p>}
             {post.contactPhone && <p><b>Телефон:</b> {post.contactPhone}</p>}
             {post.contactEmail && <p><b>Email:</b> {post.contactEmail}</p>}
             {post.contactLink &&
                 <p><b>Посилання:</b> <a href={post.contactLink} target="_blank" rel="noreferrer">{post.contactLink}</a>
                 </p>}
-            {post.eventDate && <p><b>Дата події:</b> {new Date(post.eventDate).toLocaleString()}</p>}
             <small>{new Date(post.creationDate).toLocaleDateString()}</small>
 
             {isForUsers &&

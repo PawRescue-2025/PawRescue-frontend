@@ -70,7 +70,7 @@ const allowedTypesByRole: Record<number, PostType[]> = {
 };
 
 
-const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubmit, userType}) => {
+const AddPostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubmit, userType}) => {
     const [newPost, setNewPost] = useState<NewPostData>({
         type: "",
         title: "",
@@ -94,9 +94,46 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubm
         );
     };
 
-
     const filteredLabels = getFilteredPostTypes(userType);
 
+    const [locationQuery, setLocationQuery] = useState("");
+    const [locationResults, setLocationResults] = useState<{ display_name: string }[]>([]);
+    const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+
+    const searchLocations = async (query: string) => {
+        if (!query || query.length < 2) {
+            setLocationResults([]);
+            return;
+        }
+
+        setIsLoadingLocations(true);
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&countrycodes=ua&q=${encodeURIComponent(query)}`
+            );
+            const data = await res.json();
+            setLocationResults(data);
+            console.log(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoadingLocations(false);
+        }
+    };
+
+    const [locationTimeout, setLocationTimeout] = useState<any>(null);
+
+    const handleLocationInput = (value: string) => {
+        setLocationQuery(value);
+
+        if (locationTimeout) clearTimeout(locationTimeout);
+
+        setLocationTimeout(
+            setTimeout(() => {
+                searchLocations(value);
+            }, 300)
+        );
+    };
 
 
     if (!show) return null;
@@ -134,6 +171,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubm
                 location: ""
             });
             onClose()
+            onSubmit()
         } catch (err: any) {
             console.log(err);
         }
@@ -304,21 +342,63 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubm
                     </div>
                     }
 
-                    { newPost.type !== "" && !(newPost.type === PostType.Story || newPost.type === PostType.Useful) &&
+                    {newPost.type !== "" && !(newPost.type === PostType.Story || newPost.type === PostType.Useful) &&
 
-                        <div className="mb-3">
-                        <label>Локація</label>
-                        <input
-                            className="form-control input-glass"
-                            value={newPost.location}
-                            onChange={e => setNewPost({...newPost, location: e.target.value})}
-                            placeholder="Місто, адреса…"
-                        />
-                    </div>
+                        <div className="mb-3" style={{position: "relative"}}>
+                            <label>Локація</label>
+                            <input
+                                className="form-control input-glass"
+                                value={locationQuery}
+                                onChange={(e) => handleLocationInput(e.target.value)}
+                                placeholder="Почніть вводити назву міста або села..."
+                            />
+
+                            {isLoadingLocations && (
+                                <div style={{padding: "8px", fontSize: "0.9rem"}}>
+                                    Завантаження...
+                                </div>
+                            )}
+
+                            {locationResults.length > 0 && (
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        top: "100%",
+                                        left: 0,
+                                        right: 0,
+                                        background: "white",
+                                        borderRadius: "8px",
+                                        boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
+                                        zIndex: 9999,
+                                        maxHeight: "250px",
+                                        overflowY: "auto"
+                                    }}
+                                >
+                                    {locationResults.map((loc, index) => (
+                                        <div
+                                            key={index}
+                                            onClick={() => {
+                                                setNewPost({...newPost, location: loc.display_name});
+                                                setLocationQuery(loc.display_name);
+                                                setLocationResults([]);
+                                            }}
+                                            style={{
+                                                padding: "10px 12px",
+                                                cursor: "pointer",
+                                                borderBottom: "1px solid #eee"
+                                            }}
+                                        >
+                                            {loc.display_name}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                     }
 
-                    { newPost.type !== "" && !(newPost.type === PostType.Story || newPost.type === PostType.Useful) &&
-                        <div >
+                    {newPost.type !== "" && !(newPost.type === PostType.Story || newPost.type === PostType.Useful) &&
+                        <div>
                             <h5 className="mt-4 mb-2" style={{color: "rgba(24,67,29,0.85)", fontWeight: "700"}}>
                                 Контактна інформація
                             </h5>
@@ -364,4 +444,4 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubm
     );
 };
 
-export default CreatePostModal;
+export default AddPostModal;

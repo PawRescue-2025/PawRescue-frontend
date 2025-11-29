@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PostViewModel from "../ViewModels/PostViewModel";
 import { PostType } from "../Enums/PostType";
 import UserViewModel from "../ViewModels/UserViewModel";
-import CreatePostModal from "../Components/CreatePostModal";
+import AddPostModal from "../Components/AddPostModal";
 import PostCard from "../Components/PostCard";
 
 const userVM = new UserViewModel();
@@ -80,7 +80,7 @@ const MainPostsPage: React.FC = () => {
                             ...post,
                             author: {
                                 fullName: user.fullName,
-                                profileImage: user.profileImageUrl || null,
+                                profileImage: user.photo || null,
                             }
                         };
                     } catch {
@@ -307,7 +307,7 @@ const MainPostsPage: React.FC = () => {
 
             </div>
 
-            <CreatePostModal
+            <AddPostModal
                 show={showNewPostForm}
                 onClose={() => setShowNewPostForm(false)}
                 onSubmit={() => handleSubmitAddForm()}

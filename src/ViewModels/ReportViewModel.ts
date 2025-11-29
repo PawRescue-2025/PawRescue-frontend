@@ -52,4 +52,9 @@ export default class ReportViewModel extends BaseViewModel {
     async getReportById(reportId: number): Promise<any> {
         return await this.get(`/${reportId}`);
     }
+
+    async getReportByPostId(postId: number): Promise<any> {
+        return null
+        //TODO: implement
+    }
 }
