@@ -10,6 +10,7 @@ import ModeratorComplaintsPage from "./Views/ComplaintsPage";
 import MenuBar from "./Components/MenuBar";
 import ShelterPage from "./Views/ShelterPage";
 import UserProfilePage from "./Views/UserPage";
+import ResourcesPage from "./Views/ResourcesPage";
 
 function AppWrapper() {
     const location = useLocation();
@@ -29,7 +30,8 @@ function AppWrapper() {
                 <Route path="/useful-links" element={<UsefulLinkPage />} />
                 <Route path="/add-shelter" element={<AddShelterPage />} />
                 <Route path="/profile/:userId" element={<UserProfilePage />} />
-                <Route path="/shelter" element={<ShelterPage />} />
+                <Route path="/shelter/:shelterId" element={<ShelterPage />} />
+                <Route path="/resources/:shelterId" element={<ResourcesPage />} />
 
             </Routes>
         </>

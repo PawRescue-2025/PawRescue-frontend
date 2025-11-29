@@ -160,7 +160,7 @@ const ShelterPage: React.FC = () => {
                         </>
                     )}
 
-                    <Link to={`/user/${shelter.ownerId}`} className="btn-gradient btn">
+                    <Link to={`/profile/${shelter.ownerId}`} className="btn-gradient btn">
                         Профіль власника
                     </Link>
                 </div>

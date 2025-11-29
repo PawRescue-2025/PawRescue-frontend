@@ -117,7 +117,7 @@ const MenuBar: React.FC = () => {
 
             {userRole === 1 &&
                 <NavLink
-                to={`/shelter/${shelterId}`}
+                to={`/shelter/${6}`}
                 style={({isActive}) => ({
                     textDecoration: "none",
                     padding: "0.4rem 0.8rem",
@@ -129,6 +129,22 @@ const MenuBar: React.FC = () => {
             >
                 Притулок
             </NavLink>
+            }
+
+            {userRole === 1 &&
+                <NavLink
+                    to={`/resources/${6}`}
+                    style={({isActive}) => ({
+                        textDecoration: "none",
+                        padding: "0.4rem 0.8rem",
+                        borderRadius: "10px",
+                        color: isActive ? "black" : "#333",
+                        background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                        transition: "0.3s"
+                    })}
+                >
+                    Ресурси
+                </NavLink>
             }
 
             <div>
