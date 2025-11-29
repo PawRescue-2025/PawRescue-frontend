@@ -97,7 +97,7 @@ const MenuBar: React.FC = () => {
                         transition: "0.3s"
                     })}
                 >
-                    Підтвердження
+                    Верифікації
                 </NavLink>
             }
 

@@ -16,7 +16,7 @@ interface Verification {
 const statusLabels: { [key in VerificationStatus]: string } = {
     [VerificationStatus.NotVerified]: "Не верифіковано",
     [VerificationStatus.Pending]: "В роботі",
-    [VerificationStatus.Verified]: "Підтверджено",
+    [VerificationStatus.Verified]: "Верифіковано",
     [VerificationStatus.Declined]: "Відхилено",
 };
 
