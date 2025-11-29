@@ -143,7 +143,7 @@ const AddPostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubmit,
         handleAddPost(e)
     };
 
-    const handleAddPost = async (e: React.FormEvent) => {
+    /*const handleAddPost = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const userId = localStorage.getItem("userId")!;
@@ -175,7 +175,46 @@ const AddPostModal: React.FC<CreatePostModalProps> = ({ show, onClose, onSubmit,
         } catch (err: any) {
             console.log(err);
         }
+    };*/
+    const handleAddPost = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const userId = localStorage.getItem("userId")!;
+            await postVM.addPost(
+                userId,
+                newPost.type as PostType,
+                newPost.title,
+                newPost.content,
+                newPost.photos,
+                new Date(newPost.eventDate),
+                newPost.contactPhone,
+                newPost.contactEmail,
+                newPost.contactLink,
+                newPost.location
+            );
+
+            // Очистити форму
+            setNewPost({
+                type: "",
+                title: "",
+                content: "",
+                photos: [],
+                eventDate: "",
+                contactPhone: "",
+                contactEmail: "",
+                contactLink: "",
+                location: ""
+            });
+
+            // Викликати onSubmit асинхронно
+            onClose();
+            await onSubmit();
+
+        } catch (err: any) {
+            console.log(err);
+        }
     };
+
 
     return (
         <div

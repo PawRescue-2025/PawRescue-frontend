@@ -18,6 +18,7 @@ const EditUserForm: React.FC<Props> = ({ show, onClose, user, onSaved }) => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [description, setDescription] = useState("");
     const [photo, setPhoto] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null); // ➤ ДОДАТИ ТУТ
 
     useEffect(() => {
         if (user) {
@@ -25,8 +26,10 @@ const EditUserForm: React.FC<Props> = ({ show, onClose, user, onSaved }) => {
             setFullName(user.fullName || "");
             setPhoneNumber(user.phoneNumber || "");
             setDescription(user.description || "");
+            setPhotoPreview(user.photo || null); // підтягуємо існуюче фото
         }
     }, [user]);
+
 
     const handleSave = async () => {
         await userVM.editUser(
@@ -35,12 +38,13 @@ const EditUserForm: React.FC<Props> = ({ show, onClose, user, onSaved }) => {
             password || "",
             fullName,
             phoneNumber,
-            photo,
+            photo || undefined,
             description
         );
         onSaved();
         onClose();
     };
+
 
     if (!show) return null;
 
@@ -190,9 +194,29 @@ const EditUserForm: React.FC<Props> = ({ show, onClose, user, onSaved }) => {
                         type="file"
                         className="form-control input-glass"
                         accept="image/*"
-                        onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                        onChange={(e) => {
+                            const file = e.target.files?.[0] || null;
+                            setPhoto(file);
+                            if (file) setPhotoPreview(URL.createObjectURL(file));
+                        }}
                     />
                 </div>
+
+                {photoPreview && (
+                    <div className="mb-3 text-center">
+                        <img
+                            src={photoPreview}
+                            alt="User"
+                            style={{
+                                width: "120px",
+                                height: "120px",
+                                objectFit: "cover",
+                                borderRadius: "50%",
+                                border: "2px solid white",
+                            }}
+                        />
+                    </div>
+                )}
 
                 <button
                     className="btn btn-gradient w-100 py-3"
