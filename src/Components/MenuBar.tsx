@@ -85,6 +85,22 @@ const MenuBar: React.FC = () => {
             </NavLink>
             }
 
+            {userRole === 3 &&
+                <NavLink
+                    to="/verifications"
+                    style={({isActive}) => ({
+                        textDecoration: "none",
+                        padding: "0.4rem 0.8rem",
+                        borderRadius: "10px",
+                        color: isActive ? "black" : "#333",
+                        background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                        transition: "0.3s"
+                    })}
+                >
+                    Підтвердження
+                </NavLink>
+            }
+
             <NavLink
                 to="/useful-links"
                 style={({isActive}) => ({

@@ -11,6 +11,7 @@ import MenuBar from "./Components/MenuBar";
 import ShelterPage from "./Views/ShelterPage";
 import UserProfilePage from "./Views/UserPage";
 import ResourcesPage from "./Views/ResourcesPage";
+import VerificationsPage from "./Views/VerificationsPage";
 
 function AppWrapper() {
     const location = useLocation();
@@ -25,6 +26,7 @@ function AppWrapper() {
             <Routes>
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/complaints" element={<ModeratorComplaintsPage />} />
+                <Route path="/verifications" element={<VerificationsPage />} />
                 <Route path="/main" element={<MainPostsPage />} />
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/useful-links" element={<UsefulLinkPage />} />
