@@ -77,17 +77,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
     const [statusLable, setStatusLable] = useState(post.status === 1 ? "Розблокувати" : "Заблокувати");
     const [report, setReport] = useState<any>(null);
     const [isReportOpen, setIsReportOpen] = useState(false);
-
+    const [helpStatus, setHelpStatus] = useState(post.isHelpRequestCompleted);
+    const [isHovered, setIsHovered] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [editData, setEditData] = useState({
-        content: post.content,
-        eventDate: post.eventDate ? new Date(post.eventDate) : null,
-        contactPhone: post.contactPhone || "",
-        contactEmail: post.contactEmail || "",
-        contactLink: post.contactLink || "",
-        location: post.location || ""
-    });
-
 
     const [isComplaintOpen, setIsComplaintOpen] = useState(false);
     const [commentComplaint, setCommentComplaint] = useState<{
@@ -187,6 +179,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
             alert("Не вдалося заблокувати публікацію.");
         }
     };
+
+    const toggleHelpRequestStatus = async () => {
+        try {
+            if (!isOwner) return;
+            const updatedPost = await postVM.editHelpRequestStatus(post.id);
+
+            setHelpStatus(updatedPost.isHelpRequestCompleted);
+
+            alert("Статус оновлено");
+        } catch (err) {
+            console.error("Помилка оновлення статусу запиту:", err);
+            alert("Не вдалося оновити статус.");
+        }
+    };
+
 
     return (
         <div className="post-card">
@@ -369,19 +376,28 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 </div>
             )}
 
-            {(post.isHelpRequestCompleted !== null && (post.postType === 2 || post.postType === 3 || post.postType === 4)) && (
+            {(helpStatus !== null &&
+                [PostType.FinancialHelp, PostType.MaterialHelp, PostType.VolunteerHelp].includes(post.postType)) && (
                 <h5
+                    onClick={toggleHelpRequestStatus}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
                     style={{
                         color: "white",
-                        backgroundColor: post.isHelpRequestCompleted ? "red": "green",
+                        backgroundColor: helpStatus ? (isHovered ? "#c0392b" : "red") : (isHovered ? "#27ae60" : "green"),
                         padding: "4px 8px",
                         borderRadius: "4px",
-                        display: "inline-block"
+                        display: "inline-block",
+                        cursor: "pointer",
+                        userSelect: "none",
+                        transition: "background-color 0.3s ease"
                     }}
+                    title="Натисніть, щоб змінити статус"
                 >
-                    {post.isHelpRequestCompleted ? "Запит закритий" : "Запит активний"}
+                    {helpStatus ? "Запит закритий" : "Запит активний"}
                 </h5>
             )}
+
 
             <h5>{post.content || "(немає контенту)"}</h5>
             {post.location && <p><b>Локація:</b> {post.location}</p>}
