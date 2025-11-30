@@ -111,7 +111,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
                     background: "transparent",
                     border: "none",
                     cursor: "pointer",
-                    fontSize: "1.2rem"
+                    fontSize: "1.2rem",
+                    visibility: String(localStorage.getItem("userId")) !== authorId ? "visible" : "hidden",
                 }}
                 onClick={() => onReport(id)}
             >

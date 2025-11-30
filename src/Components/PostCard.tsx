@@ -11,6 +11,8 @@ import PostViewModel from "../ViewModels/PostViewModel";
 import { ActivityStatus } from "../Enums/ActivityStatus";
 import AddReportForm from "./AddReportForm";
 import ReportViewForm from "./ReportViewForm";
+import EditPostForm from "./EditPostForm";
+
 
 
 interface Post {
@@ -27,6 +29,7 @@ interface Post {
     photos?: string[];
     userId: string;
     status: number;
+    isHelpRequestCompleted: boolean;
     author?: {
         fullName: string;
         profileImage: string | null;
@@ -74,6 +77,16 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
     const [statusLable, setStatusLable] = useState(post.status === 1 ? "Розблокувати" : "Заблокувати");
     const [report, setReport] = useState<any>(null);
     const [isReportOpen, setIsReportOpen] = useState(false);
+
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [editData, setEditData] = useState({
+        content: post.content,
+        eventDate: post.eventDate ? new Date(post.eventDate) : null,
+        contactPhone: post.contactPhone || "",
+        contactEmail: post.contactEmail || "",
+        contactLink: post.contactLink || "",
+        location: post.location || ""
+    });
 
 
     const [isComplaintOpen, setIsComplaintOpen] = useState(false);
@@ -177,6 +190,63 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
 
     return (
         <div className="post-card">
+
+            {isOwner && (
+                <div
+                    style={{
+                        position: "relative",
+                        bottom: "10px",
+                        left: "93%",
+                        fontSize: "1.5rem",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        marginBottom: "-40px",
+                    }}
+                >
+                    <button
+                        onClick={() => setIsEditOpen(true)}
+                        title="Редагувати"
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                        }}
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                    </button>
+
+                    <button
+                        onClick={async () => {
+                            if (window.confirm("Ви впевнені, що хочете видалити публікацію?")) {
+                                await postVM.deletePost(post.id);
+                                alert("Публікацію видалено");
+                                window.location.reload();
+                            }
+                        }}
+                        title="Видалити"
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                        }}
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14H6L5 6"/>
+                            <path d="M10 11v6"/>
+                            <path d="M14 11v6"/>
+                            <path d="M9 6V4h6v2"/>
+                        </svg>
+                    </button>
+                </div>
+            )}
+
             {isForUsers && <button
                 className="report-btn"
                 onClick={() => setIsComplaintOpen(true)}
@@ -189,6 +259,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                     background: "transparent",
                     border: "none",
                     cursor: "pointer",
+                    visibility: String(currentUserId) !== post.userId ? "visible" : "hidden",
                 }}
             >
                 ⚠
@@ -298,6 +369,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 </div>
             )}
 
+            {(post.isHelpRequestCompleted !== null && (post.postType === 2 || post.postType === 3 || post.postType === 4)) && (
+                <h5
+                    style={{
+                        color: "white",
+                        backgroundColor: post.isHelpRequestCompleted ? "red": "green",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        display: "inline-block"
+                    }}
+                >
+                    {post.isHelpRequestCompleted ? "Запит закритий" : "Запит активний"}
+                </h5>
+            )}
+
             <h5>{post.content || "(немає контенту)"}</h5>
             {post.location && <p><b>Локація:</b> {post.location}</p>}
             {post.eventDate && <p><b>Дата події:</b> {new Date(post.eventDate).toLocaleString()}</p>}
@@ -361,8 +446,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 </div>
             )}
 
-
-            {/* Виклик модальних форм */}
             {!report && (
                 <AddReportForm
                     show={isReportOpen}
@@ -404,20 +487,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                             status={comment.status}
                         />
                     ))}
-                        <button
-                            onClick={() => setShowAllComments(!showAllComments)}
-                            style={{
-                                background: "transparent",
-                                border: "none",
-                                color: "#3fb573",
-                                cursor: "pointer",
-                                marginTop: "8px",
-                                fontWeight: "600"
-                            }}
-                        >
-                            {comments.length > 2 && !showAllComments ? "Переглянути всі коментарі" : "" }
-                            {comments.length > 0 && showAllComments ? "Сховати коментарі" : "" }
-                        </button>
+                    <button
+                        onClick={() => setShowAllComments(!showAllComments)}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            color: "#3fb573",
+                            cursor: "pointer",
+                            marginTop: "8px",
+                            fontWeight: "600"
+                        }}
+                    >
+                        {comments.length > 2 && !showAllComments ? "Переглянути всі коментарі" : ""}
+                        {comments.length > 0 && showAllComments ? "Сховати коментарі" : ""}
+                    </button>
 
                     <div style={{marginTop: "0.5rem", display: "flex", gap: "0.5rem"}}>
                         <input
@@ -445,7 +528,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 </div>
             }
             {!isForUsers && (
-                <div style={{ display: "flex", gap: "10px", position: "relative", bottom: "-10px", left: "-10px" }}>
+                <div style={{display: "flex", gap: "10px", position: "relative", bottom: "-10px", left: "-10px"}}>
                     <button
                         onClick={handleBlockPost}
                         style={{
@@ -463,7 +546,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 </div>
             )}
 
-
             <ComplaintForm
                 complainantId={String(localStorage.getItem("userId"))}
                 isOpen={commentComplaint.open}
@@ -471,9 +553,31 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 targetType="comment"
                 commentId={commentComplaint.commentId!}
             />
+
+            {isEditOpen && (
+                <EditPostForm
+                    postId={post.id}
+                    initialContent={post.content}
+                    initialEventDate={post.eventDate}
+                    initialPhone={post.contactPhone}
+                    initialEmail={post.contactEmail}
+                    initialLink={post.contactLink}
+                    initialLocation={post.location}
+                    onClose={() => setIsEditOpen(false)}
+                    onSaved={() => {
+                        alert("Публікацію оновлено");
+                        window.location.reload();
+                    }}
+                />
+            )}
+
+
+
+
         </div>
     );
 };
+
 
 
 const carouselBtnStyle: React.CSSProperties = {

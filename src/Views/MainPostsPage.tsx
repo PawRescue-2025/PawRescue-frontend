@@ -22,6 +22,7 @@ interface Post {
     photos?: string[];
     userId: string;
     status: number;
+    isHelpRequestCompleted: boolean;
     author?: {
         fullName: string;
         profileImage: string | null;
@@ -95,6 +96,7 @@ const MainPostsPage: React.FC = () => {
                 })
             );
             setPosts(postsWithAuthors);
+            console.log(postsWithAuthors)
         } catch (err: any) {
             setError(err.message || "Помилка при завантаженні постів");
         } finally {
@@ -111,8 +113,8 @@ const MainPostsPage: React.FC = () => {
 
     const filteredPosts = posts
         .filter(p => filterType === "" || p.postType === filterType)
-        .filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.content.toLowerCase().includes(search.toLowerCase()))
-        // .sort((a, b) => sortDesc ? new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime() : new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime());
+        .filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.content.toLowerCase().includes(search.toLowerCase())
+        || String(p.location).toLowerCase().includes(search.toLowerCase()))
 
     const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
     const paginatedPosts = filteredPosts.slice(
@@ -205,7 +207,7 @@ const MainPostsPage: React.FC = () => {
                     border: 1px solid rgba(255,255,255,0.4);
                     color: #000;
                     border-radius: 12px;
-                    width: 200px;
+                    width: 400px;
                     transition: all 0.3s ease;
                 }
                 .search-input::placeholder {
@@ -237,7 +239,7 @@ const MainPostsPage: React.FC = () => {
                     <div style={{position: "relative"}}>
                         <input
                             className="form-control search-input"
-                            placeholder="Пошук..."
+                            placeholder="Пошук за текстовими збігами або локацією..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

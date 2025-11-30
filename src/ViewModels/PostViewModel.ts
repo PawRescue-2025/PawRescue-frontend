@@ -46,7 +46,7 @@ export default class PostViewModel extends BaseViewModel {
             contactPhone,
             contactEmail,
             contactLink,
-            photos: photos_url
+            photos: photos_url,
         };
         return await this.post(body);
     }
