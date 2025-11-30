@@ -23,9 +23,16 @@ const AddReportForm: React.FC<AddReportFormProps> = ({ show, onClose, onSaved, p
             return alert("Заповніть хоча б одне поле: текст, фото або документи");
         }
         await reportVM.addReport(postId, text, photos, documents);
+
+        // Скидання форми
+        setText("");
+        setPhotos([]);
+        setDocuments([]);
+
         onSaved();
         onClose();
     };
+
 
     return ReactDOM.createPortal(
         <div
