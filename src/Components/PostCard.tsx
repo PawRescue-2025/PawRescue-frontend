@@ -9,6 +9,8 @@ import ComplaintForm from "./AddComplaintForm";
 import CommentItem from "./CommentItem";
 import PostViewModel from "../ViewModels/PostViewModel";
 import { ActivityStatus } from "../Enums/ActivityStatus";
+import AddReportForm from "./AddReportForm";
+import ReportViewForm from "./ReportViewForm";
 
 
 interface Post {
@@ -70,6 +72,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
     const [statusLable, setStatusLable] = useState(post.status === 1 ? "Розблокувати" : "Заблокувати");
+    const [report, setReport] = useState<any>(null);
+    const [isReportOpen, setIsReportOpen] = useState(false);
+
 
     const [isComplaintOpen, setIsComplaintOpen] = useState(false);
     const [commentComplaint, setCommentComplaint] = useState<{
@@ -81,6 +86,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
     });
     const [showAllComments, setShowAllComments] = useState(false);
 
+    const currentUserId = localStorage.getItem("userId");
+    const isOwner = currentUserId === post.userId;
 
     const fetchComments = async () => {
         try {
@@ -107,6 +114,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
             console.error("Помилка завантаження коментарів:", err);
         }
     };
+
+    const fetchReport = async () => {
+        try {
+            const r = await reportVM.getReportByPostId(post.id);
+            setReport(r || null);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if ([PostType.FinancialHelp, PostType.MaterialHelp, PostType.VolunteerHelp].includes(post.postType)) {
+            fetchReport();
+        }
+    }, []);
 
     useEffect(() => {
         fetchComments();
@@ -285,6 +307,78 @@ const PostCard: React.FC<PostCardProps> = ({ post, isForUsers}) => {
                 <p><b>Посилання:</b> <a href={post.contactLink} target="_blank" rel="noreferrer">{post.contactLink}</a>
                 </p>}
             <small>{new Date(post.creationDate).toLocaleDateString()}</small>
+
+            {/*{[PostType.FinancialHelp, PostType.MaterialHelp, PostType.VolunteerHelp].includes(post.postType) && (
+                <div style={{marginTop: "1rem", display: "flex", gap: "10px"}}>
+                    {isOwner && !report && (
+                        <button className="btn btn-success" onClick={() => setIsReportOpen(true)}>
+                            Додати звіт
+                        </button>
+                    )}
+                    {isOwner && report && (
+                        <button className="btn btn-danger" onClick={async () => {
+                            if (window.confirm("Видалити звіт?")) {
+                                await reportVM.deleteReport(report.id);
+                                setReport(null);
+                            }
+                        }}>Видалити</button>
+                    )}
+                    {report && (
+                        <button className="btn btn-info" onClick={() => setIsReportOpen(true)}>
+                            Переглянути звіт
+                        </button>
+                    )}
+                </div>
+            )}*/}
+            {/* Кнопки для звіту, внизу справа */}
+            {[PostType.FinancialHelp, PostType.MaterialHelp, PostType.VolunteerHelp].includes(post.postType) && (
+                <div style={{
+                    position: "relative",
+                    width: "100%",
+                    marginTop: "1rem",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: "8px"
+                }}>
+                    {isOwner && !report && (
+                        <button className="btn btn-success" onClick={() => setIsReportOpen(true)}>
+                            Додати звіт
+                        </button>
+                    )}
+                    {isOwner && report && (
+                        <button className="btn btn-danger" onClick={async () => {
+                            if (window.confirm("Видалити звіт?")) {
+                                await reportVM.deleteReport(report.id);
+                                setReport(null);
+                            }
+                        }}>Видалити</button>
+                    )}
+                    {report && (
+                        <button className="btn btn-info" onClick={() => setIsReportOpen(true)}>
+                            Переглянути звіт
+                        </button>
+                    )}
+                </div>
+            )}
+
+
+            {/* Виклик модальних форм */}
+            {!report && (
+                <AddReportForm
+                    show={isReportOpen}
+                    onClose={() => setIsReportOpen(false)}
+                    onSaved={fetchReport}
+                    postId={post.id}
+                />
+            )}
+
+            {report && (
+                <ReportViewForm
+                    show={isReportOpen}
+                    onClose={() => setIsReportOpen(false)}
+                    report={report}
+                />
+            )}
 
             {isForUsers &&
                 <div style={{marginTop: "1rem", borderTop: "1px solid #ccc", paddingTop: "1rem", width: "100%"}}>
