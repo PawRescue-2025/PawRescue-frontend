@@ -83,16 +83,25 @@ export default class AnimalViewModel extends BaseViewModel {
         adoptionStatus: AdoptionStatus,
         arrivalDate: Date,
         description: string,
+        existing_photos: string[],
         photos: File[] = [],
+        existing_documents: string[],
         documents: File[] = []
     ): Promise<any> {
         const photos_url = [];
         const documents_url = [];
         const fileVM = new FileViewModel();
 
+        for (const photo of existing_photos) {
+            photos_url.push(photo);
+        }
         for (const photo of photos) {
             const url = await fileVM.uploadFile(photo);
             photos_url.push(url);
+        }
+
+        for (const document of existing_documents) {
+            documents_url.push(document);
         }
         for (const document of documents) {
             const url = await fileVM.uploadFile(document);

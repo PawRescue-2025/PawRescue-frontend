@@ -46,8 +46,10 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
         adoptionStatus: AdoptionStatus.AvailableForAdoption,
     });
 
-    const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
-    const [documentPreviews, setDocumentPreviews] = useState<string[]>([]); // optional, if you want previews for docs
+    //const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+    //const [documentPreviews, setDocumentPreviews] = useState<string[]>([]); // optional, if you want previews for docs
+    const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
+    const [existingDocuments, setExistingDocuments] = useState<string[]>([]);
 
     useEffect(() => {
         if (animal) {
@@ -64,32 +66,80 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                 adoptionStatus: animal.adoptionStatus ?? AdoptionStatus.AvailableForAdoption,
             });
 
-            // ➤ Set existing photo URLs for preview
-            setPhotoPreviews(animal.photos || []);
-            setDocumentPreviews(animal.documents || []);
+            setExistingPhotos(animal.photos || []);
+            setExistingDocuments(animal.documents || []);
         }
     }, [animal]);
 
 // When user selects new photos
+    /*const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files ? Array.from(e.target.files) : [];
+
+        // Keep previous new files + newly selected ones
+        setFormData({ ...formData, photos: [...formData.photos, ...files] });
+
+        // Combine previews: existing + new
+        const newPreviews = files.map((file) => URL.createObjectURL(file));
+        setPhotoPreviews([...animal.photos, ...newPreviews]);
+    };*/
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files ? Array.from(e.target.files) : [];
-        setFormData({ ...formData, photos: files });
-
-        // Create temporary URLs for preview
-        const urls = files.map((file) => URL.createObjectURL(file));
-        setPhotoPreviews(urls);
+        setFormData({ ...formData, photos: [...formData.photos, ...files] });
     };
 
+// Delete photo handler
+    const handleDeletePhoto = (index: number, isExisting: boolean) => {
+        if (isExisting) {
+            // Remove from existing photos
+            const updated = [...existingPhotos];
+            updated.splice(index, 1);
+            setExistingPhotos(updated);
+        } else {
+            // Remove from new photos
+            const updated = [...formData.photos];
+            updated.splice(index, 1);
+            setFormData({ ...formData, photos: updated });
+        }
+    };
+
+    const photoPreviews = [
+        ...existingPhotos,
+        ...formData.photos.map((file) => URL.createObjectURL(file)),
+    ];
+
     // Обробник вибору документів
-    const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    /*const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files ? Array.from(e.target.files) : [];
         setFormData({ ...formData, documents: files });
 
         // Створюємо прев'ю для документів (можна показати іконку або назву файлу)
         const urls = files.map((file) => URL.createObjectURL(file));
         setDocumentPreviews(urls);
+    };*/
+    const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files ? Array.from(e.target.files) : [];
+
+        // додаємо, а не замінюємо
+        setFormData({ ...formData, documents: [...formData.documents, ...files] });
     };
 
+    const documentPreviews = [
+        ...existingDocuments,
+        ...formData.documents.map((file) => URL.createObjectURL(file))
+    ];
+
+
+    const handleDeleteDocument = (index: number, isExisting: boolean) => {
+        if (isExisting) {
+            const updated = [...existingDocuments];
+            updated.splice(index, 1);
+            setExistingDocuments(updated);
+        } else {
+            const updated = [...formData.documents];
+            updated.splice(index, 1);
+            setFormData({ ...formData, documents: updated });
+        }
+    };
 
 
 
@@ -130,7 +180,9 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                 formData.adoptionStatus,
                 new Date(animal.arrivalDate),
                 formData.description,
-                formData.photos,
+                existingPhotos,  // ✅ pass updated existing photos
+                formData.photos, // new files
+                existingDocuments, // ✅ same for documents
                 formData.documents
             );
             onSubmit();
@@ -288,7 +340,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                     </div>
 
                     {/* Display photo previews */}
-                    <div className="mb-3 d-flex flex-wrap gap-2">
+                    {/*<div className="mb-3 d-flex flex-wrap gap-2">
                         {photoPreviews.map((src, idx) => (
                             <img
                                 key={idx}
@@ -297,7 +349,50 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                                 style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "10px" }}
                             />
                         ))}
+
+                    </div>*/}
+                    <div className="mb-3 d-flex flex-wrap gap-2">
+                        {photoPreviews.map((src, idx) => {
+                            const isExisting = idx < existingPhotos.length;
+                            return (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        position: "relative",
+                                        width: "100px",
+                                        height: "100px",
+                                        borderRadius: "10px",
+                                        overflow: "hidden",
+                                    }}
+                                >
+                                    <img
+                                        src={src}
+                                        alt={`Preview ${idx}`}
+                                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDeletePhoto(isExisting ? idx : idx - existingPhotos.length, isExisting)}
+                                        style={{
+                                            position: "absolute",
+                                            top: "2px",
+                                            right: "2px",
+                                            background: "rgba(255,0,0,0.7)",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            color: "white",
+                                            width: "20px",
+                                            height: "20px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
+
 
 
                     <div className="mb-3">
@@ -311,7 +406,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                     </div>
 
                     {/* Display document previews */}
-                    <div className="mb-3 d-flex flex-wrap gap-2">
+                    {/*<div className="mb-3 d-flex flex-wrap gap-2">
                         {documentPreviews.map((src, idx) => (
                             <div
                                 key={idx}
@@ -332,7 +427,125 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                                 <span style={{ fontSize: "12px" }}>{formData.documents[idx]?.name}</span>
                             </div>
                         ))}
+                    </div>*/}
+                    {/*<div className="mb-3 d-flex flex-wrap gap-2">
+                        {documentPreviews.map((src, idx) => {
+                            const isExisting = idx < existingDocuments.length;
+
+                            return (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        position: "relative",
+                                        width: "120px",
+                                        height: "80px",
+                                        borderRadius: "8px",
+                                        background: "#f1f1f1",
+                                        padding: "6px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        overflow: "hidden"
+                                    }}
+                                >
+                <span style={{ fontSize: "12px", textAlign: "center" }}>
+                    {isExisting ? src.split("/").pop() : formData.documents[idx - existingDocuments.length]?.name}
+                </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleDeleteDocument(
+                                                isExisting ? idx : idx - existingDocuments.length,
+                                                isExisting
+                                            )
+                                        }
+                                        style={{
+                                            position: "absolute",
+                                            top: "2px",
+                                            right: "2px",
+                                            background: "rgba(255,0,0,0.7)",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            color: "white",
+                                            width: "20px",
+                                            height: "20px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>*/}
+                    <div className="mb-3 d-flex flex-wrap gap-2">
+                        {documentPreviews.map((src, idx) => {
+                            const isExisting = idx < existingDocuments.length;
+
+                            return (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        position: "relative",
+                                        width: "120px",
+                                        height: "80px",
+                                        borderRadius: "8px",
+                                        background: "#f1f1f1",
+                                        padding: "6px",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        overflow: "hidden"
+                                    }}
+                                >
+                                    <a
+                                        href={src}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            fontSize: "12px",
+                                            textAlign: "center",
+                                            wordBreak: "break-all",
+                                            color: "#0a3d2c",
+                                            textDecoration: "underline"
+                                        }}
+                                    >
+                                        {isExisting
+                                            ? src.split("/").pop()                     // назва зі старого посилання
+                                            : formData.documents[idx - existingDocuments.length]?.name // назва нового файла
+                                        }
+                                    </a>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleDeleteDocument(
+                                                isExisting ? idx : idx - existingDocuments.length,
+                                                isExisting
+                                            )
+                                        }
+                                        style={{
+                                            position: "absolute",
+                                            top: "2px",
+                                            right: "2px",
+                                            background: "rgba(255,0,0,0.7)",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            color: "white",
+                                            width: "20px",
+                                            height: "20px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            );
+                        })}
                     </div>
+
+
 
 
                     <div className="mb-3 form-check">

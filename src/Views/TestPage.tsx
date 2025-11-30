@@ -102,12 +102,12 @@ const TestPage: React.FC = () => {
     };
 
     const executeEditUser = async () => {
-        await handleTest("UserViewModel.editUser", () => 
+        await handleTest("UserViewModel.editUser", () =>
             userVM.editUser(
-                testData.userId, 
-                "updated@example.com", 
-                "NewPass123!", 
-                "Updated Name", 
+                testData.userId,
+                "updated@example.com",
+                "NewPass123!",
+                "Updated Name",
                 "+380509999999",
                 selectedPhoto,
                 "Updated description"
@@ -141,7 +141,7 @@ const TestPage: React.FC = () => {
 
     const executeAddVerificationRequest = async () => {
         if (!selectedDocument) return;
-        await handleTest("VerificationViewModel.addVerificationRequest", () => 
+        await handleTest("VerificationViewModel.addVerificationRequest", () =>
             verificationVM.addVerificationRequest(testData.userId, [selectedDocument])
         );
         // Очистити вибраний документ після виконання
@@ -172,13 +172,13 @@ const TestPage: React.FC = () => {
 
     const executeSignUpVerified = async () => {
         if (!selectedSignUpDoc) return;
-        await handleTest("AuthViewModel.signUpVerified", () => 
+        await handleTest("AuthViewModel.signUpVerified", () =>
             authVM.signUpVerified(
-                "newemail4", 
-                testData.password, 
-                testData.fullName, 
-                testData.phoneNumber, 
-                UserType.ShelterOwner, 
+                "newemail4",
+                testData.password,
+                testData.fullName,
+                testData.phoneNumber,
+                UserType.ShelterOwner,
                 [selectedSignUpDoc]
             )
         );
@@ -194,25 +194,25 @@ const TestPage: React.FC = () => {
         <div style={{ padding: "20px", fontFamily: "monospace" }}>
             <h1>🧪 ViewModels Test Page</h1>
             <p>Click buttons to test endpoints. Check browser console for results.</p>
-            
+
             {/* AuthViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>🔐 AuthViewModel</h2>
-                <button onClick={() => handleTest("AuthViewModel.logIn", () => 
+                <button onClick={() => handleTest("AuthViewModel.logIn", () =>
                     authVM.logIn(testData.email, testData.password)
                 )}>Test logIn</button>
-                
-                <button onClick={() => handleTest("AuthViewModel.logout", () => 
+
+                <button onClick={() => handleTest("AuthViewModel.logout", () =>
                     authVM.logout("becghvwbehjgcvbehwjcbhjecvb")
                 )}>Test logout (NOT IMPLEMENTED)</button>
-                
-                <button onClick={() => handleTest("AuthViewModel.signUpUnverified", () => 
+
+                <button onClick={() => handleTest("AuthViewModel.signUpUnverified", () =>
                     authVM.signUpUnverified(testData.email, testData.password, testData.fullName, testData.phoneNumber)
                 )}>Test signUpUnverified</button>
-                
+
                 <div style={{ marginTop: "10px" }}>
-                    <input 
-                        type="file" 
+                    <input
+                        type="file"
                         ref={signUpDocInputRef}
                         onChange={handleSignUpDocSelect}
                         accept="image/*,.pdf,.doc,.docx"
@@ -224,9 +224,9 @@ const TestPage: React.FC = () => {
                     {signUpDocPreview && (
                         <div style={{ marginTop: "10px" }}>
                             {selectedSignUpDoc?.type.startsWith('image/') ? (
-                                <img 
-                                    src={signUpDocPreview} 
-                                    alt="Document Preview" 
+                                <img
+                                    src={signUpDocPreview}
+                                    alt="Document Preview"
                                     style={{ maxWidth: "200px", maxHeight: "200px", border: "1px solid #ccc" }}
                                 />
                             ) : (
@@ -240,7 +240,7 @@ const TestPage: React.FC = () => {
                         </div>
                     )}
                 </div>
-                <button 
+                <button
                     onClick={executeSignUpVerified}
                     disabled={!selectedSignUpDoc}
                     style={{ opacity: selectedSignUpDoc ? 1 : 0.5 }}
@@ -252,23 +252,23 @@ const TestPage: React.FC = () => {
             {/* AnimalViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>🐶 AnimalViewModel</h2>
-                <button onClick={() => handleTest("AnimalViewModel.addAnimal", () => 
+                <button onClick={() => handleTest("AnimalViewModel.addAnimal", () =>
                     animalVM.addAnimal(testData.shelterId, "Rex", AnimalSpecies.Dog, "Labrador", AnimalGender.Male, 3, 25, AnimalSize.Medium, true, true, false, AdoptionStatus.AvailableForAdoption, new Date(), "Friendly dog", [] , [])
                 )}>Test addAnimal</button>
-                
-                <button onClick={() => handleTest("AnimalViewModel.editAnimal", () => 
+
+                {/*<button onClick={() => handleTest("AnimalViewModel.editAnimal", () =>
                     animalVM.editAnimal(testData.animalId, testData.shelterId, "Rex Updated", AnimalSpecies.Dog, "Labrador", AnimalGender.Male, 4, 26, AnimalSize.Medium, true, true, true, AdoptionStatus.Adopted, new Date(), "Updated friendly dog", [], [])
-                )}>Test editAnimal</button>
-                
-                <button onClick={() => handleTest("AnimalViewModel.deleteAnimal", () => 
+                )}>Test editAnimal</button>*/}
+
+                <button onClick={() => handleTest("AnimalViewModel.deleteAnimal", () =>
                     animalVM.deleteAnimal(testData.animalId)
                 )}>Test deleteAnimal</button>
-                
-                <button onClick={() => handleTest("AnimalViewModel.getAnimalById", () => 
+
+                <button onClick={() => handleTest("AnimalViewModel.getAnimalById", () =>
                     animalVM.getAnimalById(testData.animalId)
                 )}>Test getAnimalById</button>
-                
-                <button onClick={() => handleTest("AnimalViewModel.getAnimalsByShelter", () => 
+
+                <button onClick={() => handleTest("AnimalViewModel.getAnimalsByShelter", () =>
                     animalVM.getAnimalsByShelter(testData.shelterId)
                 )}>Test getAnimalsByShelter</button>
             </section>
@@ -276,23 +276,23 @@ const TestPage: React.FC = () => {
             {/* CommentViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>💬 CommentViewModel</h2>
-                <button onClick={() => handleTest("CommentViewModel.addComment", () => 
+                <button onClick={() => handleTest("CommentViewModel.addComment", () =>
                     commentVM.addComment(testData.postId, testData.userId, "Test comment content")
                 )}>Test addComment</button>
-                
-                <button onClick={() => handleTest("CommentViewModel.editCommentStatus", () => 
+
+                <button onClick={() => handleTest("CommentViewModel.editCommentStatus", () =>
                     commentVM.editCommentStatus(testData.commentId, ActivityStatus.Deleted)
                 )}>Test editCommentStatus</button>
-                
-                <button onClick={() => handleTest("CommentViewModel.deleteComment", () => 
+
+                <button onClick={() => handleTest("CommentViewModel.deleteComment", () =>
                     commentVM.deleteComment(testData.commentId)
                 )}>Test deleteComment</button>
-                
-                <button onClick={() => handleTest("CommentViewModel.getCommentById", () => 
+
+                <button onClick={() => handleTest("CommentViewModel.getCommentById", () =>
                     commentVM.getCommentById(testData.commentId)
                 )}>Test getCommentById</button>
-                
-                <button onClick={() => handleTest("CommentViewModel.getCommentsByPost", () => 
+
+                <button onClick={() => handleTest("CommentViewModel.getCommentsByPost", () =>
                     commentVM.getCommentsByPost(testData.postId)
                 )}>Test getCommentsByPost</button>
             </section>
@@ -300,23 +300,23 @@ const TestPage: React.FC = () => {
             {/* ComplaintViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>⚠️ ComplaintViewModel</h2>
-                <button onClick={() => handleTest("ComplaintViewModel.addComplaint", () => 
+                <button onClick={() => handleTest("ComplaintViewModel.addComplaint", () =>
                     complaintVM.addComplaint(testData.userId, ComplaintCategory.Spam, testData.userId, testData.postId, null, "Test complaint")
                 )}>Test addComplaint</button>
-                
-                <button onClick={() => handleTest("ComplaintViewModel.editComplaintStatus", () => 
+
+                <button onClick={() => handleTest("ComplaintViewModel.editComplaintStatus", () =>
                     complaintVM.editComplaintStatus(testData.complaintId, ComplaintStatus.Processed)
                 )}>Test editComplaintStatus</button>
-                
-                <button onClick={() => handleTest("ComplaintViewModel.deleteComplaint", () => 
+
+                <button onClick={() => handleTest("ComplaintViewModel.deleteComplaint", () =>
                     complaintVM.deleteComplaint(testData.complaintId)
                 )}>Test deleteComplaint</button>
-                
-                <button onClick={() => handleTest("ComplaintViewModel.getAllComplaints", () => 
+
+                <button onClick={() => handleTest("ComplaintViewModel.getAllComplaints", () =>
                     complaintVM.getAllComplaints()
                 )}>Test getAllComplaints</button>
-                
-                <button onClick={() => handleTest("ComplaintViewModel.getComplaintById", () => 
+
+                <button onClick={() => handleTest("ComplaintViewModel.getComplaintById", () =>
                     complaintVM.getComplaintById(testData.complaintId)
                 )}>Test getComplaintById</button>
             </section>
@@ -324,27 +324,27 @@ const TestPage: React.FC = () => {
             {/* PointsViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>⭐ PointsViewModel</h2>
-                <button onClick={() => handleTest("PointsViewModel.addPoints", () => 
+                <button onClick={() => handleTest("PointsViewModel.addPoints", () =>
                     pointsVM.addPoints(testData.userId, testData.userId, 8, "Great work!")
                 )}>Test addPoints</button>
-                
-                <button onClick={() => handleTest("PointsViewModel.deletePoints", () => 
+
+                <button onClick={() => handleTest("PointsViewModel.deletePoints", () =>
                     pointsVM.deletePoints(testData.pointsId)
                 )}>Test deletePoints</button>
-                
-                <button onClick={() => handleTest("PointsViewModel.getAllPoints", () => 
+
+                <button onClick={() => handleTest("PointsViewModel.getAllPoints", () =>
                     pointsVM.getAllPoints()
                 )}>Test getAllPoints</button>
-                
-                <button onClick={() => handleTest("PointsViewModel.getPointsById", () => 
+
+                <button onClick={() => handleTest("PointsViewModel.getPointsById", () =>
                     pointsVM.getPointsById(testData.pointsId)
                 )}>Test getPointsById</button>
-                
-                <button onClick={() => handleTest("PointsViewModel.getPointsByRecipient", () => 
+
+                <button onClick={() => handleTest("PointsViewModel.getPointsByRecipient", () =>
                     pointsVM.getPointsByRecipient(testData.userId)
                 )}>Test getPointsByRecipient</button>
-                
-                <button onClick={() => handleTest("PointsViewModel.getPointsByReviewer", () => 
+
+                <button onClick={() => handleTest("PointsViewModel.getPointsByReviewer", () =>
                     pointsVM.getPointsByReviewer("reviewer-id")
                 )}>Test getPointsByReviewer</button>
             </section>
@@ -352,35 +352,35 @@ const TestPage: React.FC = () => {
             {/* PostViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>📝 PostViewModel</h2>
-                <button onClick={() => handleTest("PostViewModel.addPost", () => 
+                <button onClick={() => handleTest("PostViewModel.addPost", () =>
                     postVM.addPost(testData.userId, PostType.Story, "Test Post", "Тестовий контент разом з буквами ї'іє", [], new Date(), "312312", "dsadas", "asdads", "Kyiv")
                 )}>Test addPost</button>
-                
-                <button onClick={() => handleTest("PostViewModel.editPost", () => 
+
+                <button onClick={() => handleTest("PostViewModel.editPost", () =>
                     postVM.editPost(testData.postId, "Updated content", new Date(), null, null, null, "Lviv")
                 )}>Test editPost</button>
-                
-                <button onClick={() => handleTest("PostViewModel.editHelpRequestStatus", () => 
+
+                <button onClick={() => handleTest("PostViewModel.editHelpRequestStatus", () =>
                     postVM.editHelpRequestStatus(testData.postId)
                 )}>Test editHelpRequestStatus</button>
-                
-                <button onClick={() => handleTest("PostViewModel.editPostStatus", () => 
+
+                <button onClick={() => handleTest("PostViewModel.editPostStatus", () =>
                     postVM.editPostStatus(testData.postId, ActivityStatus.Blocked)
                 )}>Test editPostStatus</button>
-                
-                <button onClick={() => handleTest("PostViewModel.deletePost", () => 
+
+                <button onClick={() => handleTest("PostViewModel.deletePost", () =>
                     postVM.deletePost(testData.postId)
                 )}>Test deletePost</button>
-                
-                <button onClick={() => handleTest("PostViewModel.getAllPosts", () => 
+
+                <button onClick={() => handleTest("PostViewModel.getAllPosts", () =>
                     postVM.getAllPosts()
                 )}>Test getAllPosts</button>
-                
-                <button onClick={() => handleTest("PostViewModel.getPostById", () => 
+
+                <button onClick={() => handleTest("PostViewModel.getPostById", () =>
                     postVM.getPostById(testData.postId)
                 )}>Test getPostById</button>
-                
-                <button onClick={() => handleTest("PostViewModel.getPostsByUser", () => 
+
+                <button onClick={() => handleTest("PostViewModel.getPostsByUser", () =>
                     postVM.getPostsByUser(testData.userId)
                 )}>Test getPostsByUser</button>
             </section>
@@ -388,15 +388,15 @@ const TestPage: React.FC = () => {
             {/* ReportViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>📊 ReportViewModel</h2>
-                <button onClick={() => handleTest("ReportViewModel.addReport", () => 
+                <button onClick={() => handleTest("ReportViewModel.addReport", () =>
                     reportVM.addReport(testData.postId, "Test report text")
                 )}>Test addReport</button>
-                
-                <button onClick={() => handleTest("ReportViewModel.deleteReport", () => 
+
+                <button onClick={() => handleTest("ReportViewModel.deleteReport", () =>
                     reportVM.deleteReport(testData.reportId)
                 )}>Test deleteReport</button>
-                
-                <button onClick={() => handleTest("ReportViewModel.getReportById", () => 
+
+                <button onClick={() => handleTest("ReportViewModel.getReportById", () =>
                     reportVM.getReportById(testData.reportId)
                 )}>Test getReportById</button>
             </section>
@@ -404,27 +404,27 @@ const TestPage: React.FC = () => {
             {/* ResourcesViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>📦 ResourcesViewModel</h2>
-                <button onClick={() => handleTest("ResourcesViewModel.addResource", () => 
+                <button onClick={() => handleTest("ResourcesViewModel.addResource", () =>
                     resourcesVM.addResource(testData.shelterId, "Food", "Dog Food", "Premium dry food", true)
                 )}>Test addResource</button>
-                
-                <button onClick={() => handleTest("ResourcesViewModel.editResourceDescription", () => 
+
+                <button onClick={() => handleTest("ResourcesViewModel.editResourceDescription", () =>
                     resourcesVM.editResourceDescription(testData.resourceId, "Updated description")
                 )}>Test editResourceDescription</button>
-                
-                <button onClick={() => handleTest("ResourcesViewModel.editResourceIsPresent", () => 
+
+                <button onClick={() => handleTest("ResourcesViewModel.editResourceIsPresent", () =>
                     resourcesVM.editResourceIsPresent(testData.resourceId)
                 )}>Test editResourceIsPresent</button>
-                
-                <button onClick={() => handleTest("ResourcesViewModel.deleteResource", () => 
+
+                <button onClick={() => handleTest("ResourcesViewModel.deleteResource", () =>
                     resourcesVM.deleteResource(testData.resourceId)
                 )}>Test deleteResource</button>
-                
-                <button onClick={() => handleTest("ResourcesViewModel.getResourceById", () => 
+
+                <button onClick={() => handleTest("ResourcesViewModel.getResourceById", () =>
                     resourcesVM.getResourceById(testData.resourceId)
                 )}>Test getResourceById</button>
-                
-                <button onClick={() => handleTest("ResourcesViewModel.getResourcesByShelter", () => 
+
+                <button onClick={() => handleTest("ResourcesViewModel.getResourcesByShelter", () =>
                     resourcesVM.getResourcesByShelter(testData.shelterId)
                 )}>Test getResourcesByShelter</button>
             </section>
@@ -432,15 +432,15 @@ const TestPage: React.FC = () => {
             {/* ShelterViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>🏠 ShelterViewModel</h2>
-                <button onClick={() => handleTest("ShelterViewModel.addShelter", () => 
+                <button onClick={() => handleTest("ShelterViewModel.addShelter", () =>
                     shelterVM.addShelter(testData.userId, "Happy Paws Shelter", "A shelter for dogs", "Kyiv, Ukraine", testData.contactPhone, testData.contactEmail, testData.contactLink)
                 )}>Test addShelter</button>
-                
-                <button onClick={() => handleTest("ShelterViewModel.editShelter", () => 
+
+                <button onClick={() => handleTest("ShelterViewModel.editShelter", () =>
                     shelterVM.editShelter(testData.shelterId, "Happy Paws Updated", "Updated description", "Lviv, Ukraine")
                 )}>Test editShelter</button>
-                
-                <button onClick={() => handleTest("ShelterViewModel.getShelterById", () => 
+
+                <button onClick={() => handleTest("ShelterViewModel.getShelterById", () =>
                     shelterVM.getShelterById(testData.shelterId)
                 )}>Test getShelterById</button>
             </section>
@@ -448,23 +448,23 @@ const TestPage: React.FC = () => {
             {/* UsefulLinkViewModel */}
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>🔗 UsefulLinkViewModel</h2>
-                <button onClick={() => handleTest("UsefulLinkViewModel.addUsefulLink", () => 
+                <button onClick={() => handleTest("UsefulLinkViewModel.addUsefulLink", () =>
                     linkVM.addUsefulLink("Resources", "Vet Contacts", "https://example.com/vets")
                 )}>Test addUsefulLink</button>
-                
-                <button onClick={() => handleTest("UsefulLinkViewModel.editUsefulLink", () => 
+
+                <button onClick={() => handleTest("UsefulLinkViewModel.editUsefulLink", () =>
                     linkVM.editUsefulLink(testData.linkId, "Updated Title", "https://example.com/updated")
                 )}>Test editUsefulLink</button>
-                
-                <button onClick={() => handleTest("UsefulLinkViewModel.deleteUsefulLink", () => 
+
+                <button onClick={() => handleTest("UsefulLinkViewModel.deleteUsefulLink", () =>
                     linkVM.deleteUsefulLink(testData.linkId)
                 )}>Test deleteUsefulLink</button>
-                
-                <button onClick={() => handleTest("UsefulLinkViewModel.getAllUsefulLinks", () => 
+
+                <button onClick={() => handleTest("UsefulLinkViewModel.getAllUsefulLinks", () =>
                     linkVM.getAllUsefulLinks()
                 )}>Test getAllUsefulLinks</button>
-                
-                <button onClick={() => handleTest("UsefulLinkViewModel.getUsefulLinkById", () => 
+
+                <button onClick={() => handleTest("UsefulLinkViewModel.getUsefulLinkById", () =>
                     linkVM.getUsefulLinkById(testData.linkId)
                 )}>Test getUsefulLinkById</button>
             </section>
@@ -473,8 +473,8 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>👤 UserViewModel</h2>
                 <div style={{ marginBottom: "10px" }}>
-                    <input 
-                        type="file" 
+                    <input
+                        type="file"
                         ref={fileInputRef}
                         onChange={handlePhotoSelect}
                         accept="image/*"
@@ -485,9 +485,9 @@ const TestPage: React.FC = () => {
                     </button>
                     {photoPreview && (
                         <div style={{ marginTop: "10px" }}>
-                            <img 
-                                src={photoPreview} 
-                                alt="Preview" 
+                            <img
+                                src={photoPreview}
+                                alt="Preview"
                                 style={{ maxWidth: "200px", maxHeight: "200px", border: "1px solid #ccc" }}
                             />
                             <p style={{ fontSize: "12px", color: "#666" }}>
@@ -496,31 +496,31 @@ const TestPage: React.FC = () => {
                         </div>
                     )}
                 </div>
-                <button 
+                <button
                     onClick={executeEditUser}
                     disabled={!selectedPhoto}
                     style={{ opacity: selectedPhoto ? 1 : 0.5 }}
                 >
                     Test editUser {selectedPhoto ? '(з фото)' : '(виберіть фото)'}
                 </button>
-                
-                <button onClick={() => handleTest("UserViewModel.deleteUser", () => 
+
+                <button onClick={() => handleTest("UserViewModel.deleteUser", () =>
                     userVM.deleteUser(testData.userId)
                 )}>Test deleteUser</button>
-                
-                <button onClick={() => handleTest("UserViewModel.editUserStatus", () => 
+
+                <button onClick={() => handleTest("UserViewModel.editUserStatus", () =>
                     userVM.editUserStatus(testData.userId, ActivityStatus.Active)
                 )}>Test editUserStatus</button>
-                
-                <button onClick={() => handleTest("UserViewModel.getUserById", () => 
+
+                <button onClick={() => handleTest("UserViewModel.getUserById", () =>
                     userVM.getUserById(testData.userId)
                 )}>Test getUserById</button>
-                
-                <button onClick={() => handleTest("UserViewModel.getUserPointsNumber", () => 
+
+                <button onClick={() => handleTest("UserViewModel.getUserPointsNumber", () =>
                     userVM.getUserPointsNumber(testData.userId)
                 )}>Test getUserPointsNumber</button>
-                
-                <button onClick={() => handleTest("UserViewModel.getUserVerificationStatus", () => 
+
+                <button onClick={() => handleTest("UserViewModel.getUserVerificationStatus", () =>
                     userVM.getUserVerificationStatus(testData.userId)
                 )}>Test getUserVerificationStatus</button>
             </section>
@@ -529,8 +529,8 @@ const TestPage: React.FC = () => {
             <section style={{ marginBottom: "30px", border: "1px solid #ccc", padding: "15px" }}>
                 <h2>✔️ VerificationViewModel</h2>
                 <div style={{ marginBottom: "10px" }}>
-                    <input 
-                        type="file" 
+                    <input
+                        type="file"
                         ref={documentInputRef}
                         onChange={handleDocumentSelect}
                         accept="image/*,.pdf,.doc,.docx"
@@ -542,9 +542,9 @@ const TestPage: React.FC = () => {
                     {documentPreview && (
                         <div style={{ marginTop: "10px" }}>
                             {selectedDocument?.type.startsWith('image/') ? (
-                                <img 
-                                    src={documentPreview} 
-                                    alt="Document Preview" 
+                                <img
+                                    src={documentPreview}
+                                    alt="Document Preview"
                                     style={{ maxWidth: "200px", maxHeight: "200px", border: "1px solid #ccc" }}
                                 />
                             ) : (
@@ -558,23 +558,23 @@ const TestPage: React.FC = () => {
                         </div>
                     )}
                 </div>
-                <button 
+                <button
                     onClick={executeAddVerificationRequest}
                     disabled={!selectedDocument}
                     style={{ opacity: selectedDocument ? 1 : 0.5 }}
                 >
                     Test addVerificationRequest {selectedDocument ? '(з документом)' : '(виберіть документ)'}
                 </button>
-                
-                <button onClick={() => handleTest("VerificationViewModel.getAllVerifications", () => 
+
+                <button onClick={() => handleTest("VerificationViewModel.getAllVerifications", () =>
                     verificationVM.getAllVerifications()
                 )}>Test getAllVerifications</button>
-                
-                <button onClick={() => handleTest("VerificationViewModel.getVerificationById", () => 
+
+                <button onClick={() => handleTest("VerificationViewModel.getVerificationById", () =>
                     verificationVM.getVerificationById(testData.verificationId)
                 )}>Test getVerificationById</button>
-                
-                <button onClick={() => handleTest("VerificationViewModel.editVerificationStatus", () => 
+
+                <button onClick={() => handleTest("VerificationViewModel.editVerificationStatus", () =>
                     verificationVM.editVerificationStatus(testData.verificationId, VerificationStatus.Verified)
                 )}>Test editVerificationStatus</button>
             </section>
