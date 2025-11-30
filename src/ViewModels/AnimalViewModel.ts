@@ -100,7 +100,7 @@ export default class AnimalViewModel extends BaseViewModel {
         }
 
         const body = {
-            animalId,
+            id: animalId,
             shelterId,
             name,
             species,

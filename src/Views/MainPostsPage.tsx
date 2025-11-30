@@ -114,7 +114,7 @@ const MainPostsPage: React.FC = () => {
     const filteredPosts = posts
         .filter(p => filterType === "" || p.postType === filterType)
         .filter(p => p.title.toLowerCase().includes(search.toLowerCase()) || p.content.toLowerCase().includes(search.toLowerCase())
-        || String(p.location).toLowerCase().includes(search.toLowerCase()))
+        || String(p.location).toLowerCase().includes(search.toLowerCase()) || (p.author?.fullName || "").toLowerCase().includes(search.toLowerCase()))
 
     const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
     const paginatedPosts = filteredPosts.slice(

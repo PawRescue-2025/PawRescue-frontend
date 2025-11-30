@@ -93,9 +93,28 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal, isOwner, onEdit }) => {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h3>{animal.name}</h3>
                 {isOwner && (
-                    <div style={{ display: "flex", gap: "8px" }}>
+                    /*<div style={{ display: "flex", gap: "8px" }}>
                         <button onClick={onEdit} style={actionBtnStyle}>Редагувати</button>
                         <button onClick={handleDelete} style={{ ...actionBtnStyle, backgroundColor: "#d9534f" }}>Видалити</button>
+                    </div>*/
+                    <div style={{ display: "flex", gap: "8px" }}>
+                        <button title="Редагувати" onClick={onEdit} style={{ ...actionBtnStyle, background: "none" }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                        </button>
+                        <button title="Видалити" onClick={handleDelete} style={{ ...actionBtnStyle, background: "none" }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6l-1 14H6L5 6"/>
+                                <path d="M10 11v6"/>
+                                <path d="M14 11v6"/>
+                                <path d="M9 6V4h6v2"/>
+                            </svg>
+                        </button>
                     </div>
                 )}
             </div>
@@ -217,7 +236,7 @@ const AnimalCard: React.FC<AnimalCardProps> = ({ animal, isOwner, onEdit }) => {
                     <p><b>Вид:</b> {animal.species}</p>
                     <p><b>Порода:</b> {animal.breed}</p>
                     <p><b>Стать:</b> {animal.gender}</p>
-                    <p><b>Вік:</b> {animal.age} років</p>
+                    <p><b>Вік:</b> {animal.age} р</p>
                     <p><b>Розмір:</b> {animalSizeLabels[animal.size as AnimalSize]}</p>
                     <p><b>Вага:</b> {animal.weight} кг</p>
                     {animal.description && <p><b>Опис:</b> {animal.description}</p>}

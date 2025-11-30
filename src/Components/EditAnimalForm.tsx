@@ -1,125 +1,140 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import AnimalViewModel from "../ViewModels/AnimalViewModel";
-
-import { AnimalSpecies } from "../Enums/AnimalSpecies";
-import { AnimalGender } from "../Enums/AnimalGender";
-import { AnimalSize } from "../Enums/AnimalSize";
 import { AdoptionStatus } from "../Enums/AdoptionStatus";
 
 const animalVM = new AnimalViewModel();
 
-interface Animal {
-    id: number;
-    shelterId: number;
-    name: string;
-    species: string;
-    breed: string;
-    gender: AnimalGender;
-    age: number;
-    size: AnimalSize;
-    weight: number;
-    description?: string;
-    isHealthy: boolean;
-    isVaccinated: boolean;
-    isSterilized: boolean;
-    adoptionStatus: AdoptionStatus;
-    arrivalDate: string;
-    photos?: string[];
-    documents?: string[];
-}
-
 interface EditAnimalFormProps {
     show: boolean;
-    animal: Animal;
+    animal: any;
     onClose: () => void;
     onSubmit: () => void;
 }
 
-interface AnimalFormData {
+interface EditAnimalData {
     name: string;
-    species: string;
-    breed: string;
-    gender: AnimalGender | "";
     age: number | "";
     weight: number | "";
-    size: AnimalSize | "";
-    isHealthy: boolean;
-    isVaccinated: boolean;
-    isSterilized: boolean;
-    adoptionStatus: AdoptionStatus | "";
     description: string;
     photos: File[];
     documents: File[];
+    isHealthy: boolean;
+    isVaccinated: boolean;
+    isSterilized: boolean;
+    adoptionStatus: AdoptionStatus;
 }
 
+const adoptionStatusLabels: { [key in AdoptionStatus]: string } = {
+    [AdoptionStatus.NotAvailableForAdoption]: "Недоступно до всиновлення",
+    [AdoptionStatus.AvailableForAdoption]: "Доступно до всиновлення",
+    [AdoptionStatus.Adopted]: "Всиновлено",
+    [AdoptionStatus.CurrentlyFostered]: "На перетримці",
+};
+
 const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, onSubmit }) => {
-    const [formData, setFormData] = useState<AnimalFormData>({
+    const [formData, setFormData] = useState<EditAnimalData>({
         name: "",
-        species: "",
-        breed: "",
-        gender: "",
         age: "",
         weight: "",
-        size: "",
+        description: "",
+        photos: [],
+        documents: [],
         isHealthy: true,
         isVaccinated: true,
         isSterilized: true,
         adoptionStatus: AdoptionStatus.AvailableForAdoption,
-        description: "",
-        photos: [],
-        documents: [],
     });
+
+    const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+    const [documentPreviews, setDocumentPreviews] = useState<string[]>([]); // optional, if you want previews for docs
 
     useEffect(() => {
         if (animal) {
             setFormData({
-                name: animal.name,
-                species: animal.species,
-                breed: animal.breed,
-                gender: animal.gender,
-                age: animal.age,
-                weight: animal.weight,
-                size: animal.size,
-                isHealthy: animal.isHealthy,
-                isVaccinated: animal.isVaccinated,
-                isSterilized: animal.isSterilized,
-                adoptionStatus: animal.adoptionStatus,
+                name: animal.name || "",
+                age: animal.age || "",
+                weight: animal.weight || "",
                 description: animal.description || "",
-                photos: [],
-                documents: [],
+                photos: [], // new files
+                documents: [], // new files
+                isHealthy: animal.isHealthy ?? true,
+                isVaccinated: animal.isVaccinated ?? true,
+                isSterilized: animal.isSterilized ?? true,
+                adoptionStatus: animal.adoptionStatus ?? AdoptionStatus.AvailableForAdoption,
             });
+
+            // ➤ Set existing photo URLs for preview
+            setPhotoPreviews(animal.photos || []);
+            setDocumentPreviews(animal.documents || []);
         }
     }, [animal]);
 
+// When user selects new photos
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files ? Array.from(e.target.files) : [];
+        setFormData({ ...formData, photos: files });
+
+        // Create temporary URLs for preview
+        const urls = files.map((file) => URL.createObjectURL(file));
+        setPhotoPreviews(urls);
+    };
+
+    // Обробник вибору документів
+    const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files ? Array.from(e.target.files) : [];
+        setFormData({ ...formData, documents: files });
+
+        // Створюємо прев'ю для документів (можна показати іконку або назву файлу)
+        const urls = files.map((file) => URL.createObjectURL(file));
+        setDocumentPreviews(urls);
+    };
+
+
+
+
     if (!show) return null;
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleClose = () => {
+        setFormData({
+            name: "",
+            age: "",
+            weight: "",
+            description: "",
+            photos: [],
+            documents: [],
+            isHealthy: true,
+            isVaccinated: true,
+            isSterilized: true,
+            adoptionStatus: AdoptionStatus.AvailableForAdoption,
+        });
+        onClose();
+    };
+
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            console.log(animal);
-            console.log(formData);
             await animalVM.editAnimal(
                 animal.id,
                 animal.shelterId,
                 formData.name,
-                formData.species as AnimalSpecies,
-                formData.breed,
-                formData.gender as AnimalGender,
+                animal.species,
+                animal.breed,
+                animal.gender,
                 Number(formData.age),
                 Number(formData.weight),
-                formData.size as AnimalSize,
+                animal.size,
                 formData.isHealthy,
                 formData.isVaccinated,
                 formData.isSterilized,
-                formData.adoptionStatus as AdoptionStatus,
-                new Date(), // keep current date as arrivalDate or preserve previous one
+                formData.adoptionStatus,
+                new Date(animal.arrivalDate),
                 formData.description,
                 formData.photos,
                 formData.documents
             );
             onSubmit();
-            onClose();
+            handleClose();
         } catch (err) {
             console.error(err);
         }
@@ -139,8 +154,47 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                 alignItems: "center",
                 zIndex: 9999,
             }}
-            onClick={onClose}
+            onClick={handleClose}
         >
+            <style>{`
+                .glass-form {
+                    background: linear-gradient(135deg, #a8e9d3 0%, #76c9a7 50%);
+                    backdrop-filter: blur(25px);
+                    -webkit-backdrop-filter: blur(25px);
+                    border: 2px solid rgba(255, 255, 255, 0.5);
+                    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+                    border-radius: 30px;
+                }
+                .input-glass {
+                    background: rgba(255, 255, 255, 0.25) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+                    color: #0c3e2d !important;
+                    transition: 0.3s ease;
+                }
+                .input-glass::placeholder {
+                    color: rgba(12, 62, 45, 0.6) !important;
+                }
+                .input-glass:focus {
+                    background: rgba(255, 255, 255, 0.35) !important;
+                    border-color: rgba(12, 135, 90, 0.6) !important;
+                    box-shadow: 0 0 20px rgba(12, 135, 90, 0.4) !important;
+                    transform: translateY(-2px);
+                }
+                .btn-gradient {
+                    background: rgba(12, 95, 61, 0.7);
+                    border: none;
+                    color: white;
+                    font-weight: 600;
+                    transition: 0.3s ease;
+                    box-shadow: 0 8px 20px rgba(45, 134, 89, 0.4);
+                }
+                .btn-gradient:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 12px 30px rgba(45, 134, 89, 0.5);
+                    background: linear-gradient(135deg, #3fb573 0%, #52d98d 50%, #6effa7 100%);
+                }
+            `}</style>
+
             <div
                 className="glass-form p-4"
                 style={{
@@ -155,7 +209,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     style={{
                         position: "absolute",
                         top: "10px",
@@ -171,12 +225,14 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                     &times;
                 </button>
 
-                <h2 className="text-center mb-3" style={{ color: "rgba(24,67,29,0.85)", fontWeight: "700" }}>
+                <h2
+                    className="text-center mb-3"
+                    style={{ color: "rgba(24,67,29,0.85)", fontWeight: "700" }}
+                >
                     Редагувати тварину
                 </h2>
 
-                <form onSubmit={handleSubmit}>
-                    {/* Name */}
+                <form onSubmit={handleSave}>
                     <div className="mb-3">
                         <label>Ім'я</label>
                         <input
@@ -187,95 +243,30 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                         />
                     </div>
 
-                    {/* Species */}
-                    <div className="mb-3">
-                        <label>Вид</label>
-                        <input
-                            className="form-control input-glass"
-                            value={formData.species}
-                            onChange={(e) => setFormData({ ...formData, species: e.target.value })}
-                            required
-                        />
-                    </div>
-
-                    {/* Breed */}
-                    <div className="mb-3">
-                        <label>Порода</label>
-                        <input
-                            className="form-control input-glass"
-                            value={formData.breed}
-                            onChange={(e) => setFormData({ ...formData, breed: e.target.value })}
-                        />
-                    </div>
-
-                    {/* Gender */}
-                    <div className="mb-3">
-                        <label>Стать</label>
-                        <div>
-                            {Object.values(AnimalGender).map((g) => (
-                                <div key={g} className="form-check form-check-inline">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="gender"
-                                        value={g}
-                                        checked={formData.gender === g}
-                                        onChange={(e) => setFormData({ ...formData, gender: e.target.value as AnimalGender })}
-                                        required
-                                    />
-                                    <label className="form-check-label">{g}</label>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Age */}
                     <div className="mb-3">
                         <label>Вік (роки)</label>
                         <input
                             type="number"
                             className="form-control input-glass"
-                            min={0}
                             value={formData.age}
+                            min={0}
                             onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
                             required
                         />
                     </div>
 
-                    {/* Weight */}
                     <div className="mb-3">
                         <label>Вага (кг)</label>
                         <input
                             type="number"
                             className="form-control input-glass"
-                            min={0}
                             value={formData.weight}
+                            min={0}
                             onChange={(e) => setFormData({ ...formData, weight: Number(e.target.value) })}
                             required
                         />
                     </div>
 
-                    {/* Size */}
-                    <div className="mb-3">
-                        <label>Розмір</label>
-                        <select
-                            className="form-control input-glass"
-                            value={formData.size}
-                            onChange={(e) => setFormData({ ...formData, size: Number(e.target.value) as AnimalSize })}
-                            required
-                        >
-                            <option value="">Оберіть розмір</option>
-                            {Object.entries(AnimalSize)
-                                .filter(([_, v]) => typeof v === "number")
-                                .map(([label, value]) => (
-                                    <option key={value} value={value}>
-                                        {label}
-                                    </option>
-                                ))}
-                        </select>
-                    </div>
-
-                    {/* Description */}
                     <div className="mb-3">
                         <label>Опис</label>
                         <textarea
@@ -286,33 +277,64 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                         />
                     </div>
 
-                    {/* Photos */}
                     <div className="mb-3">
                         <label>Фотографії</label>
                         <input
                             type="file"
                             multiple
                             className="form-control input-glass"
-                            onChange={(e) =>
-                                setFormData({ ...formData, photos: e.target.files ? Array.from(e.target.files) : [] })
-                            }
+                            onChange={handlePhotoChange}
                         />
                     </div>
 
-                    {/* Documents */}
+                    {/* Display photo previews */}
+                    <div className="mb-3 d-flex flex-wrap gap-2">
+                        {photoPreviews.map((src, idx) => (
+                            <img
+                                key={idx}
+                                src={src}
+                                alt={`Preview ${idx}`}
+                                style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "10px" }}
+                            />
+                        ))}
+                    </div>
+
+
                     <div className="mb-3">
                         <label>Документи</label>
                         <input
                             type="file"
                             multiple
                             className="form-control input-glass"
-                            onChange={(e) =>
-                                setFormData({ ...formData, documents: e.target.files ? Array.from(e.target.files) : [] })
-                            }
+                            onChange={handleDocumentChange}
                         />
                     </div>
 
-                    {/* Checkboxes */}
+                    {/* Display document previews */}
+                    <div className="mb-3 d-flex flex-wrap gap-2">
+                        {documentPreviews.map((src, idx) => (
+                            <div
+                                key={idx}
+                                style={{
+                                    width: "100px",
+                                    height: "100px",
+                                    border: "1px solid rgba(0,0,0,0.1)",
+                                    borderRadius: "10px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    textAlign: "center",
+                                    padding: "5px",
+                                    background: "#f7f7f7",
+                                    overflow: "hidden",
+                                }}
+                            >
+                                <span style={{ fontSize: "12px" }}>{formData.documents[idx]?.name}</span>
+                            </div>
+                        ))}
+                    </div>
+
+
                     <div className="mb-3 form-check">
                         <input
                             type="checkbox"
@@ -343,7 +365,6 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                         <label className="form-check-label">Стерилізована/кастрований</label>
                     </div>
 
-                    {/* Adoption Status */}
                     <div className="mb-4">
                         <label>Статус усиновлення</label>
                         <select
@@ -358,14 +379,14 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, 
                                 .filter(([_, v]) => typeof v === "number")
                                 .map(([label, value]) => (
                                     <option key={value} value={value}>
-                                        {label}
+                                        {adoptionStatusLabels[value as AdoptionStatus]}
                                     </option>
                                 ))}
                         </select>
                     </div>
 
                     <button type="submit" className="btn btn-gradient w-100 py-3">
-                        Зберегти зміни
+                        Зберегти
                     </button>
                 </form>
             </div>
