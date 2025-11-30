@@ -50,6 +50,8 @@ const adoptionStatusLabels: { [key in AdoptionStatus]: string } = {
 };
 
 
+
+
 const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, shelterId, onClose, onSubmit }) => {
     const [newAnimal, setNewAnimal] = useState<NewAnimalData>({
         name: "",
@@ -70,6 +72,32 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, shelterId, onClose,
     });
 
     if (!show) return null;
+
+    const resetForm = () => {
+        setNewAnimal({
+            name: "",
+            species: "",
+            breed: "",
+            gender: "",
+            age: "",
+            weight: "",
+            size: "",
+            isHealthy: true,
+            isVaccinated: true,
+            isSterilized: true,
+            adoptionStatus: AdoptionStatus.AvailableForAdoption,
+            arrivalDate: "",
+            description: "",
+            photos: [],
+            documents: [],
+        });
+    };
+
+    const handleClose = () => {
+        resetForm();
+        onClose();
+    };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -97,7 +125,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, shelterId, onClose,
             );
 
             onSubmit();
-            onClose();
+            handleClose();
         } catch (err) {
             console.error(err);
         }
@@ -117,7 +145,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, shelterId, onClose,
                 alignItems: "center",
                 zIndex: 9999,
             }}
-            onClick={onClose}
+            onClick={handleClose}
         >
             {/* ------------- SHARED STYLES ------------- */}
             <style>{`
@@ -175,7 +203,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, shelterId, onClose,
             >
                 {/* X CLOSE */}
                 <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     style={{
                         position: "absolute",
                         top: "10px",

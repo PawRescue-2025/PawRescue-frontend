@@ -21,9 +21,15 @@ const AddReviewForm: React.FC<Props> = ({ show, onClose, onSaved, recipientId })
         if (!comment.trim()) return alert("Коментар обов'язковий");
 
         await pointsVM.addPoints(recipientId, reviewerId, points, comment);
+
+        // Скидання форми
+        setPoints(10);
+        setComment("");
+
         onSaved();
         onClose();
     };
+
 
     if (!show) return null;
 
