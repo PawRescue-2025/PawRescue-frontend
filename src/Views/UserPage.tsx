@@ -172,9 +172,28 @@ const UserProfilePage: React.FC = () => {
                 .filters-dropdowns { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
                 .filters-dropdowns select { padding: 0.4rem 0.8rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.2); background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); font-size: 0.9rem; transition: all 0.3s ease; }
                 .filters-dropdowns select:hover { background: rgba(255,255,255,0.35); }
-                .post-cards { display: flex; flex-direction: column; align-items: center; width: 100%; }
+                .post-cards { display: flex; flex-direction: column; align-items: center; width: 95%; margin-left:10px; }
                 .post-card { background: rgba(255, 255, 255, 0.25); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 15px; padding: 1rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: all 0.3s ease; width: 60%; }
                 .post-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+                .filters-dropdowns select.btn-gradient {
+                    background: rgba(12, 95, 61, 0.7);
+                    color: white;
+                    border: none;
+                    border-radius: 12px;
+                    padding: 0.6rem 1rem;
+                    font-weight: 600;
+                    transition: 0.3s ease;
+                    appearance: none; /* красивіший вигляд */
+                    backdrop-filter: blur(25px);
+                    margin-top: 10px;
+                }
+                
+                .filters-dropdowns select.btn-gradient:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 25px rgba(45,134,89,0.5);
+                    background: linear-gradient(135deg, #3fb573 0%, #52d98d 50%, #6effa7 100%);
+                }
+
             `}</style>
 
             <div className="glass-card">
@@ -183,43 +202,54 @@ const UserProfilePage: React.FC = () => {
                 ) : (
                     <>
                         <div className="side-panel">
-                            {isOwner && <button className="btn-gradient" onClick={() => setEditMode(true)}>Редагувати профіль</button>}
+                            {isOwner && <button className="btn-gradient" onClick={() => setEditMode(true)}>Редагувати
+                                профіль</button>}
                             {!isOwner && !isModerator && (
-                                <button className="btn-gradient" onClick={() => setProfileComplaintOpen(true)}>Поскаржитись</button>
+                                <button className="btn-gradient"
+                                        onClick={() => setProfileComplaintOpen(true)}>Поскаржитись</button>
                             )}
                             {user.role === 1 && shelterId && (
                                 <Link to={`/shelter/${shelterId}`} className="btn-gradient btn">Притулок</Link>
                             )}
 
-                            <div className="text-center p-3 rounded" style={{ background: "rgba(255,255,255,0.4)" }}>
+                            <div className="text-center p-3 rounded" style={{background: "rgba(255,255,255,0.4)"}}>
                                 <h4>Лапки 🐾</h4>
                                 <h2>{points}</h2>
                                 {!isOwner && !isModerator && (
-                                    <button className="btn btn-sm btn-success mt-2" onClick={() => setShowAddReview(true)}>Додати відгук</button>
+                                    <button className="btn btn-sm btn-success mt-2"
+                                            onClick={() => setShowAddReview(true)}>Додати відгук</button>
                                 )}
-                                <button className="btn btn-sm btn-primary mt-2" onClick={() => setShowReviewsList(true)}>Переглянути відгуки ({reviews.length})</button>
+                                <button className="btn btn-sm btn-primary mt-2"
+                                        onClick={() => setShowReviewsList(true)}>Переглянути відгуки ({reviews.length})
+                                </button>
                             </div>
                         </div>
 
                         <div className="profile-header">
-                            <img src={user.photo || "/default-user.png"} alt="avatar" style={{ width: 130, height: 130, borderRadius: "50%", objectFit: "cover" }} />
+                            <img src={user.photo || "/default-user.png"} alt="avatar"
+                                 style={{width: 130, height: 130, borderRadius: "50%", objectFit: "cover"}}/>
                             <div>
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                    <h2 style={{ margin: 0 }}>{user.fullName}</h2>
+                                <div style={{display: "flex", alignItems: "center", gap: "0.5rem"}}>
+                                    <h2 style={{margin: 0}}>{user.fullName}</h2>
                                     <span className="badge badge-type">{getUserTypeLabel()}</span>
                                     {(user.role === 1 || user.role === 2) && (
                                         <span className="badge badge-verification">{getVerificationLabel()}</span>
                                     )}
-                                    {isModerator && <span className="badge badge-type">{getActivityStatusLabel()}</span>}
+                                    {isModerator &&
+                                        <span className="badge badge-type">{getActivityStatusLabel()}</span>}
                                 </div>
-                                <div style={{ marginTop: "1rem" }} className="profile-info">
+                                <div style={{marginTop: "1rem"}} className="profile-info">
                                     <div><strong>Email:</strong> {user.email}</div>
                                     <div><strong>Телефон:</strong> {user.phoneNumber}</div>
                                     {user.description && <div><strong>Опис:</strong> {user.description}</div>}
                                     {isModerator && (
                                         <>
-                                            <div><strong>Реєстрація:</strong> {user?.registrationDate ? new Date(user.registrationDate).toLocaleDateString() : "—"}</div>
-                                            {user?.deletionDate && <div><strong>Видалений:</strong> {new Date(user.deletionDate).toLocaleDateString()}</div>}
+                                            <div>
+                                                <strong>Реєстрація:</strong> {user?.registrationDate ? new Date(user.registrationDate).toLocaleDateString() : "—"}
+                                            </div>
+                                            {user?.deletionDate && <div>
+                                                <strong>Видалений:</strong> {new Date(user.deletionDate).toLocaleDateString()}
+                                            </div>}
                                         </>
                                     )}
                                 </div>
@@ -233,12 +263,22 @@ const UserProfilePage: React.FC = () => {
                         )}
 
                         <div className="filters-dropdowns">
-                            <select value={sortNewest ? "newest" : "oldest"} onChange={(e) => setSortNewest(e.target.value === "newest")}>
+                            <select
+                                className="btn-gradient"
+                                value={sortNewest ? "newest" : "oldest"}
+                                onChange={(e) => setSortNewest(e.target.value === "newest")}
+                                style={{cursor: "pointer"}}
+                            >
                                 <option value="newest">Сортувати: новіші</option>
                                 <option value="oldest">Сортувати: старіші</option>
                             </select>
 
-                            <select value={filterType === "" ? "" : filterType} onChange={(e) => setFilterType(e.target.value === "" ? "" : Number(e.target.value))}>
+                            <select
+                                className="btn-gradient"
+                                value={filterType === "" ? "" : filterType}
+                                onChange={(e) => setFilterType(e.target.value === "" ? "" : Number(e.target.value))}
+                                style={{cursor: "pointer"}}
+                            >
                                 <option value="">Всі категорії</option>
                                 {Object.entries(postTypeLabels).map(([value, label]) => (
                                     <option key={value} value={value}>{label}</option>
@@ -246,11 +286,12 @@ const UserProfilePage: React.FC = () => {
                             </select>
                         </div>
 
+
                         <div className="post-cards">
                             {filteredPosts.length === 0 ? (
                                 <p className="text-muted">Постів немає</p>
                             ) : (
-                                filteredPosts.map(p => <PostCard key={p.id} post={p} isForUsers={true} />)
+                                filteredPosts.map(p => <PostCard key={p.id} post={p} isForUsers={true}/>)
                             )}
                         </div>
                     </>
@@ -258,9 +299,10 @@ const UserProfilePage: React.FC = () => {
             </div>
 
             {/* MODALS */}
-            <EditUserForm show={editMode} onClose={() => setEditMode(false)} user={user} onSaved={fetchData} />
-            <AddPointsForm show={showAddReview} onClose={() => setShowAddReview(false)} recipientId={userId!} onSaved={fetchData} />
-            <PointsList show={showReviewsList} onClose={() => setShowReviewsList(false)} reviews={reviews} />
+            <EditUserForm show={editMode} onClose={() => setEditMode(false)} user={user} onSaved={fetchData}/>
+            <AddPointsForm show={showAddReview} onClose={() => setShowAddReview(false)} recipientId={userId!}
+                           onSaved={fetchData}/>
+            <PointsList show={showReviewsList} onClose={() => setShowReviewsList(false)} reviews={reviews}/>
             <ComplaintForm
                 complainantId={String(localStorage.getItem("userId"))}
                 isOpen={profileComplaintOpen}
