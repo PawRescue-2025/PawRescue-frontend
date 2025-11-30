@@ -15,10 +15,12 @@ import ComplaintForm from "../Components/AddComplaintForm";
 
 import { PostType } from "../Enums/PostType";
 import AddPostModal from "../Components/AddPostModal";
+import ShelterViewModel from "../ViewModels/ShelterViewModel";
 
 const userVM = new UserViewModel();
 const postVM = new PostViewModel();
 const pointsVM = new PointsViewModel();
+const shelterVM = new ShelterViewModel();
 
 const postTypeLabels: Record<number, string> = {
     [PostType.Lost]: "Зниклі",
@@ -52,6 +54,7 @@ const UserProfilePage: React.FC = () => {
 
     const [profileComplaintOpen, setProfileComplaintOpen] = useState(false);
     const [showNewPostForm, setShowNewPostForm] = useState(false);
+    const [shelterId, setShelterId] = useState<number | null>(null);
 
     const fetchData = async () => {
         if (!userId) return;
@@ -80,6 +83,14 @@ const UserProfilePage: React.FC = () => {
 
         const reviewsData = await pointsVM.getPointsByRecipient(userId);
         setReviews(reviewsData);
+
+        if (userData.role === 1) {
+            const shelterData = await shelterVM.getShelterByOwnerId(userId);
+            setShelterId(shelterData?.id || null);
+        } else {
+            setShelterId(null);
+        }
+
     };
 
     useEffect(() => {
@@ -263,8 +274,8 @@ const UserProfilePage: React.FC = () => {
                         </button>
                     )}
                     {/*<button className="btn-gradient">Притулок</button>*/}
-                    {user.role === 1 && (
-                        <Link to={`/shelter/6`} className="btn-gradient btn">
+                    {user.role === 1 && shelterId && (
+                        <Link to={`/shelter/${shelterId}`} className="btn-gradient btn">
                             Притулок
                         </Link>
                     )}

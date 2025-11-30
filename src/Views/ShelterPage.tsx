@@ -161,6 +161,18 @@ const ShelterPage: React.FC = () => {
                     gap: 1rem;
                     width: 100%;
                 }
+                .animals-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* центр */
+                gap: 1rem;
+                width: 100%;
+                }
+                
+                .animal-card-wrapper {
+                    width: 60%; /* як у постів */
+                }
+
             `}</style>
 
             {/* ----------- MAIN SHELTER CARD ----------- */}
@@ -270,24 +282,27 @@ const ShelterPage: React.FC = () => {
                         <p className="text-center">Тварин не знайдено</p>
                     ) : (
                         filteredAnimals.map(animal => (
-                            <AnimalCard
-                                key={animal.id}
-                                animal={animal}
-                                isOwner={isOwner}
-                                onEdit={() => {
-                                    setSelectedAnimal(animal);
-                                    setShowEditAnimal(true);
-                                }}
-                            />
+                            <div key={animal.id} className="animal-card-wrapper">
+                                <AnimalCard
+                                    animal={animal}
+                                    isOwner={isOwner}
+                                    onEdit={() => {
+                                        setSelectedAnimal(animal);
+                                        setShowEditAnimal(true);
+                                    }}
+                                />
+                            </div>
                         ))
                     )}
                 </div>
+
 
             </div>
 
             {/* ----------- MODALS ----------- */}
             <AddAnimalForm
                 show={showAddAnimal}
+                shelterId={Number(shelterId)}
                 onClose={() => setShowAddAnimal(false)}
                 onSubmit={fetchShelterData}
             />

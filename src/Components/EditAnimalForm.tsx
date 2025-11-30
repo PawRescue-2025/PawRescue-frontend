@@ -1,25 +1,44 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import AnimalViewModel from "../ViewModels/AnimalViewModel";
 
 import { AnimalSpecies } from "../Enums/AnimalSpecies";
 import { AnimalGender } from "../Enums/AnimalGender";
 import { AnimalSize } from "../Enums/AnimalSize";
 import { AdoptionStatus } from "../Enums/AdoptionStatus";
 
-import AnimalViewModel from "../ViewModels/AnimalViewModel";
-
 const animalVM = new AnimalViewModel();
+
+interface Animal {
+    id: number;
+    shelterId: number;
+    name: string;
+    species: string;
+    breed: string;
+    gender: AnimalGender;
+    age: number;
+    size: AnimalSize;
+    weight: number;
+    description?: string;
+    isHealthy: boolean;
+    isVaccinated: boolean;
+    isSterilized: boolean;
+    adoptionStatus: AdoptionStatus;
+    arrivalDate: string;
+    photos?: string[];
+    documents?: string[];
+}
 
 interface EditAnimalFormProps {
     show: boolean;
+    animal: Animal;
     onClose: () => void;
     onSubmit: () => void;
-    animal: any;
 }
 
 interface AnimalFormData {
     name: string;
-    species: AnimalSpecies | "";
+    species: string;
     breed: string;
     gender: AnimalGender | "";
     age: number | "";
@@ -29,13 +48,12 @@ interface AnimalFormData {
     isVaccinated: boolean;
     isSterilized: boolean;
     adoptionStatus: AdoptionStatus | "";
-    arrivalDate: string;
     description: string;
     photos: File[];
     documents: File[];
 }
 
-const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit, animal }) => {
+const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, animal, onClose, onSubmit }) => {
     const [formData, setFormData] = useState<AnimalFormData>({
         name: "",
         species: "",
@@ -48,7 +66,6 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
         isVaccinated: true,
         isSterilized: true,
         adoptionStatus: AdoptionStatus.AvailableForAdoption,
-        arrivalDate: "",
         description: "",
         photos: [],
         documents: [],
@@ -57,20 +74,17 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
     useEffect(() => {
         if (animal) {
             setFormData({
-                name: animal.name || "",
-                species: animal.species || "",
-                breed: animal.breed || "",
-                gender: animal.gender || "",
-                age: animal.age || "",
-                weight: animal.weight || "",
-                size: animal.size || "",
-                isHealthy: animal.isHealthy ?? true,
-                isVaccinated: animal.isVaccinated ?? true,
-                isSterilized: animal.isSterilized ?? true,
-                adoptionStatus: animal.adoptionStatus ?? AdoptionStatus.AvailableForAdoption,
-                arrivalDate: animal.arrivalDate
-                    ? new Date(animal.arrivalDate).toISOString().split("T")[0]
-                    : "",
+                name: animal.name,
+                species: animal.species,
+                breed: animal.breed,
+                gender: animal.gender,
+                age: animal.age,
+                weight: animal.weight,
+                size: animal.size,
+                isHealthy: animal.isHealthy,
+                isVaccinated: animal.isVaccinated,
+                isSterilized: animal.isSterilized,
+                adoptionStatus: animal.adoptionStatus,
                 description: animal.description || "",
                 photos: [],
                 documents: [],
@@ -83,10 +97,11 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const shelterId = Number(localStorage.getItem("shelterId"));
+            console.log(animal);
+            console.log(formData);
             await animalVM.editAnimal(
                 animal.id,
-                shelterId,
+                animal.shelterId,
                 formData.name,
                 formData.species as AnimalSpecies,
                 formData.breed,
@@ -98,12 +113,11 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                 formData.isVaccinated,
                 formData.isSterilized,
                 formData.adoptionStatus as AdoptionStatus,
-                new Date(formData.arrivalDate),
+                new Date(), // keep current date as arrivalDate or preserve previous one
                 formData.description,
                 formData.photos,
                 formData.documents
             );
-
             onSubmit();
             onClose();
         } catch (err) {
@@ -127,45 +141,6 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
             }}
             onClick={onClose}
         >
-            <style>{`
-                .glass-form {
-                    background: linear-gradient(135deg, #a8e9d3 0%, #76c9a7 50%);
-                    backdrop-filter: blur(25px);
-                    -webkit-backdrop-filter: blur(25px);
-                    border: 2px solid rgba(255, 255, 255, 0.5);
-                    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-                    border-radius: 30px;
-                }
-                .input-glass {
-                    background: rgba(255, 255, 255, 0.25) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-                    color: #0c3e2d !important;
-                    transition: 0.3s ease;
-                }
-                .input-glass::placeholder {
-                    color: rgba(12, 62, 45, 0.6) !important;
-                }
-                .input-glass:focus {
-                    background: rgba(255, 255, 255, 0.35) !important;
-                    border-color: rgba(12, 135, 90, 0.6) !important;
-                    box-shadow: 0 0 20px rgba(12, 135, 90, 0.4) !important;
-                    transform: translateY(-2px);
-                }
-                .btn-gradient {
-                    background: rgba(12, 95, 61, 0.7);
-                    border: none;
-                    color: white;
-                    font-weight: 600;
-                    transition: 0.3s ease;
-                    box-shadow: 0 8px 20px rgba(45, 134, 89, 0.4);
-                }
-                .btn-gradient:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 12px 30px rgba(45, 134, 89, 0.5);
-                    background: linear-gradient(135deg, #3fb573 0%, #52d98d 50%, #6effa7 100%);
-                }
-            `}</style>
-
             <div
                 className="glass-form p-4"
                 style={{
@@ -179,7 +154,6 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close button */}
                 <button
                     onClick={onClose}
                     style={{
@@ -197,15 +171,12 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                     &times;
                 </button>
 
-                <h2
-                    className="text-center mb-3"
-                    style={{ color: "rgba(24,67,29,0.85)", fontWeight: "700" }}
-                >
+                <h2 className="text-center mb-3" style={{ color: "rgba(24,67,29,0.85)", fontWeight: "700" }}>
                     Редагувати тварину
                 </h2>
 
                 <form onSubmit={handleSubmit}>
-                    {/* NAME */}
+                    {/* Name */}
                     <div className="mb-3">
                         <label>Ім'я</label>
                         <input
@@ -216,21 +187,18 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         />
                     </div>
 
-                    {/* SPECIES */}
+                    {/* Species */}
                     <div className="mb-3">
                         <label>Вид</label>
                         <input
                             className="form-control input-glass"
                             value={formData.species}
-                            onChange={(e) =>
-                                setFormData({ ...formData, species: e.target.value as AnimalSpecies })
-                            }
-                            placeholder="Собака / Кіт"
+                            onChange={(e) => setFormData({ ...formData, species: e.target.value })}
                             required
                         />
                     </div>
 
-                    {/* BREED */}
+                    {/* Breed */}
                     <div className="mb-3">
                         <label>Порода</label>
                         <input
@@ -240,7 +208,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         />
                     </div>
 
-                    {/* GENDER */}
+                    {/* Gender */}
                     <div className="mb-3">
                         <label>Стать</label>
                         <div>
@@ -252,9 +220,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                                         name="gender"
                                         value={g}
                                         checked={formData.gender === g}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, gender: e.target.value as AnimalGender })
-                                        }
+                                        onChange={(e) => setFormData({ ...formData, gender: e.target.value as AnimalGender })}
                                         required
                                     />
                                     <label className="form-check-label">{g}</label>
@@ -263,39 +229,39 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         </div>
                     </div>
 
-                    {/* AGE */}
+                    {/* Age */}
                     <div className="mb-3">
                         <label>Вік (роки)</label>
                         <input
                             type="number"
                             className="form-control input-glass"
+                            min={0}
                             value={formData.age}
                             onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
                             required
                         />
                     </div>
 
-                    {/* WEIGHT */}
+                    {/* Weight */}
                     <div className="mb-3">
                         <label>Вага (кг)</label>
                         <input
                             type="number"
                             className="form-control input-glass"
+                            min={0}
                             value={formData.weight}
                             onChange={(e) => setFormData({ ...formData, weight: Number(e.target.value) })}
                             required
                         />
                     </div>
 
-                    {/* SIZE */}
+                    {/* Size */}
                     <div className="mb-3">
                         <label>Розмір</label>
                         <select
                             className="form-control input-glass"
                             value={formData.size}
-                            onChange={(e) =>
-                                setFormData({ ...formData, size: Number(e.target.value) as AnimalSize })
-                            }
+                            onChange={(e) => setFormData({ ...formData, size: Number(e.target.value) as AnimalSize })}
                             required
                         >
                             <option value="">Оберіть розмір</option>
@@ -309,19 +275,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         </select>
                     </div>
 
-                    {/* ARRIVAL */}
-                    <div className="mb-3">
-                        <label>Дата прибуття</label>
-                        <input
-                            type="date"
-                            className="form-control input-glass"
-                            value={formData.arrivalDate}
-                            onChange={(e) => setFormData({ ...formData, arrivalDate: e.target.value })}
-                            required
-                        />
-                    </div>
-
-                    {/* DESCRIPTION */}
+                    {/* Description */}
                     <div className="mb-3">
                         <label>Опис</label>
                         <textarea
@@ -332,7 +286,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         />
                     </div>
 
-                    {/* PHOTOS */}
+                    {/* Photos */}
                     <div className="mb-3">
                         <label>Фотографії</label>
                         <input
@@ -345,7 +299,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         />
                     </div>
 
-                    {/* DOCUMENTS */}
+                    {/* Documents */}
                     <div className="mb-3">
                         <label>Документи</label>
                         <input
@@ -358,7 +312,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                         />
                     </div>
 
-                    {/* CHECKBOXES */}
+                    {/* Checkboxes */}
                     <div className="mb-3 form-check">
                         <input
                             type="checkbox"
@@ -366,7 +320,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                             checked={formData.isHealthy}
                             onChange={(e) => setFormData({ ...formData, isHealthy: e.target.checked })}
                         />
-                        <label className="form-check-label">Здорова</label>
+                        <label className="form-check-label">Здорова/ий</label>
                     </div>
 
                     <div className="mb-3 form-check">
@@ -376,7 +330,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                             checked={formData.isVaccinated}
                             onChange={(e) => setFormData({ ...formData, isVaccinated: e.target.checked })}
                         />
-                        <label className="form-check-label">Вакцинована</label>
+                        <label className="form-check-label">Вакцинована/ий</label>
                     </div>
 
                     <div className="mb-3 form-check">
@@ -386,10 +340,10 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                             checked={formData.isSterilized}
                             onChange={(e) => setFormData({ ...formData, isSterilized: e.target.checked })}
                         />
-                        <label className="form-check-label">Стерилізована/кастрована</label>
+                        <label className="form-check-label">Стерилізована/кастрований</label>
                     </div>
 
-                    {/* ADOPTION STATUS */}
+                    {/* Adoption Status */}
                     <div className="mb-4">
                         <label>Статус усиновлення</label>
                         <select
@@ -404,7 +358,7 @@ const EditAnimalForm: React.FC<EditAnimalFormProps> = ({ show, onClose, onSubmit
                                 .filter(([_, v]) => typeof v === "number")
                                 .map(([label, value]) => (
                                     <option key={value} value={value}>
-                                        {label.replace(/([A-Z])/g, " $1")}
+                                        {label}
                                     </option>
                                 ))}
                         </select>

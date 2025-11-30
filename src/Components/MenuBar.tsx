@@ -1,38 +1,49 @@
-import React, {use, useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
 import UserViewModel from "../ViewModels/UserViewModel";
+import ShelterViewModel from "../ViewModels/ShelterViewModel";
+import {UserType} from "../Enums/UserType";
 
-let userVM = new UserViewModel();
+const userVM = new UserViewModel();
+const shelterVM = new ShelterViewModel();
 
 const MenuBar: React.FC = () => {
-
     const [userRole, setUserRole] = useState<number>();
     const [userId, setUserId] = useState<string>();
-    const [shelterId, setShelterId] = useState<string>();
-
-    const loadUser = async () => {
-        try {
-            let userId = localStorage.getItem("userId");
-            setUserId(String(userId))
-            let res  = await userVM.getUserById(String(userId))
-            setUserRole(Number(res.role))
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    const loadShelter = async () => {
-        try {
-           //TODO: add func to load shelter by owner id
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    const [shelterId, setShelterId] = useState<number | null>(null);
 
     useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const storedUserId = localStorage.getItem("userId");
+                if (!storedUserId) {
+                    console.error("No userId found in localStorage");
+                    return;
+                }
+
+                setUserId(storedUserId);
+
+                const res = await userVM.getUserById(storedUserId);
+                const role = Number(res.role); // use a local variable
+                setUserRole(role);
+
+                // Only fetch shelter if user is ShelterOwner
+                if (role === UserType.ShelterOwner) {
+                    const shelter = await shelterVM.getShelterByOwnerId(storedUserId);
+                    setShelterId(shelter?.id || null);
+                } else {
+                    setShelterId(null);
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
         loadUser();
     }, []);
+
 
     return (
         <nav
@@ -54,119 +65,117 @@ const MenuBar: React.FC = () => {
                 justifyContent: "center",
             }}
         >
-
             <NavLink
                 to="/main"
-                style={({isActive}) => ({
+                style={({ isActive }) => ({
                     textDecoration: "none",
                     padding: "0.4rem 0.8rem",
                     borderRadius: "10px",
                     color: isActive ? "black" : "#333",
                     background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                    transition: "0.3s"
+                    transition: "0.3s",
                 })}
             >
                 Головна
             </NavLink>
 
-            {userRole === 3 &&
-            <NavLink
-                to="/complaints"
-                style={({isActive}) => ({
-                    textDecoration: "none",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "10px",
-                    color: isActive ? "black" : "#333",
-                    background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                    transition: "0.3s"
-                })}
-            >
-                Скарги
-            </NavLink>
-            }
+            {userRole === 3 && (
+                <>
+                    <NavLink
+                        to="/complaints"
+                        style={({ isActive }) => ({
+                            textDecoration: "none",
+                            padding: "0.4rem 0.8rem",
+                            borderRadius: "10px",
+                            color: isActive ? "black" : "#333",
+                            background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                            transition: "0.3s",
+                        })}
+                    >
+                        Скарги
+                    </NavLink>
 
-            {userRole === 3 &&
-                <NavLink
-                    to="/verifications"
-                    style={({isActive}) => ({
-                        textDecoration: "none",
-                        padding: "0.4rem 0.8rem",
-                        borderRadius: "10px",
-                        color: isActive ? "black" : "#333",
-                        background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                        transition: "0.3s"
-                    })}
-                >
-                    Верифікації
-                </NavLink>
-            }
+                    <NavLink
+                        to="/verifications"
+                        style={({ isActive }) => ({
+                            textDecoration: "none",
+                            padding: "0.4rem 0.8rem",
+                            borderRadius: "10px",
+                            color: isActive ? "black" : "#333",
+                            background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                            transition: "0.3s",
+                        })}
+                    >
+                        Верифікації
+                    </NavLink>
+                </>
+            )}
 
             <NavLink
                 to="/useful-links"
-                style={({isActive}) => ({
+                style={({ isActive }) => ({
                     textDecoration: "none",
                     padding: "0.4rem 0.8rem",
                     borderRadius: "10px",
                     color: isActive ? "black" : "#333",
                     background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                    transition: "0.3s"
+                    transition: "0.3s",
                 })}
             >
                 Корисні посилання
             </NavLink>
 
-            {userRole !== 3 &&
+            {userRole !== 3 && userId && (
                 <NavLink
-                to={`/profile/${userId}`}
-                style={({isActive}) => ({
-                    textDecoration: "none",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "10px",
-                    color: isActive ? "black" : "#333",
-                    background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                    transition: "0.3s"
-                })}
-            >
-                Мій профіль
-            </NavLink>
-            }
-
-            {userRole === 1 &&
-                <NavLink
-                to={`/shelter/${6}`}
-                style={({isActive}) => ({
-                    textDecoration: "none",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "10px",
-                    color: isActive ? "black" : "#333",
-                    background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                    transition: "0.3s"
-                })}
-            >
-                Притулок
-            </NavLink>
-            }
-
-            {userRole === 1 &&
-                <NavLink
-                    to={`/resources/${6}`}
-                    style={({isActive}) => ({
+                    to={`/profile/${userId}`}
+                    style={({ isActive }) => ({
                         textDecoration: "none",
                         padding: "0.4rem 0.8rem",
                         borderRadius: "10px",
                         color: isActive ? "black" : "#333",
                         background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
-                        transition: "0.3s"
+                        transition: "0.3s",
                     })}
                 >
-                    Ресурси
+                    Мій профіль
                 </NavLink>
-            }
+            )}
+
+            {userRole === 1 && shelterId !== null && (
+                <>
+                    <NavLink
+                        to={`/shelter/${shelterId}`}
+                        style={({ isActive }) => ({
+                            textDecoration: "none",
+                            padding: "0.4rem 0.8rem",
+                            borderRadius: "10px",
+                            color: isActive ? "black" : "#333",
+                            background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                            transition: "0.3s",
+                        })}
+                    >
+                        Притулок
+                    </NavLink>
+
+                    <NavLink
+                        to={`/resources/${shelterId}`}
+                        style={({ isActive }) => ({
+                            textDecoration: "none",
+                            padding: "0.4rem 0.8rem",
+                            borderRadius: "10px",
+                            color: isActive ? "black" : "#333",
+                            background: isActive ? "rgba(255,255,255,0.7)" : "transparent",
+                            transition: "0.3s",
+                        })}
+                    >
+                        Ресурси
+                    </NavLink>
+                </>
+            )}
 
             <div>
-                <LogoutButton/>
+                <LogoutButton />
             </div>
-
         </nav>
     );
 };

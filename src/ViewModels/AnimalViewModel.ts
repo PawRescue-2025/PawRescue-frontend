@@ -4,6 +4,7 @@ import { AnimalSpecies } from "../Enums/AnimalSpecies";
 import { AdoptionStatus } from "../Enums/AdoptionStatus";
 import BaseViewModel from "./BaseViewModel";
 import { API_ENDPOINTS } from "../config/constants";
+import FileViewModel from "./FIleViewModel";
 
 export default class AnimalViewModel extends BaseViewModel {
     constructor() {
@@ -30,6 +31,19 @@ export default class AnimalViewModel extends BaseViewModel {
         photos: File[] = [],
         documents: File[] = []
     ): Promise<any> {
+
+        const photos_url = []
+        const documents_url = []
+        const fileVM = new FileViewModel();
+        for (const photo of photos) {
+            const url = await fileVM.uploadFile(photo);
+            photos_url.push(url);
+        }
+        for (const document of documents) {
+            const url = await fileVM.uploadFile(document);
+            documents_url.push(url);
+        }
+
         const body = {
             shelterId,
             name,
@@ -40,12 +54,13 @@ export default class AnimalViewModel extends BaseViewModel {
             weight,
             size,
             description,
-            photos: photos,
-            documents: documents,
+            photos: photos_url,
+            documents: documents_url,
             isHealthy,
             isVaccinated,
             isSterilized,
-            adoptionStatus
+            adoptionStatus,
+            arrivalDate
         };
         return await this.post(body);
     }
@@ -54,7 +69,7 @@ export default class AnimalViewModel extends BaseViewModel {
     //функція редагування даних про тваринку
     async editAnimal(
         animalId: number,
-         shelterId: number,
+        shelterId: number,
         name: string,
         species: AnimalSpecies,
         breed: string,
@@ -71,6 +86,19 @@ export default class AnimalViewModel extends BaseViewModel {
         photos: File[] = [],
         documents: File[] = []
     ): Promise<any> {
+        const photos_url = [];
+        const documents_url = [];
+        const fileVM = new FileViewModel();
+
+        for (const photo of photos) {
+            const url = await fileVM.uploadFile(photo);
+            photos_url.push(url);
+        }
+        for (const document of documents) {
+            const url = await fileVM.uploadFile(document);
+            documents_url.push(url);
+        }
+
         const body = {
             animalId,
             shelterId,
@@ -82,12 +110,13 @@ export default class AnimalViewModel extends BaseViewModel {
             weight,
             size,
             description,
-            photos: photos,
-            documents: documents,
+            photos: photos_url,
+            documents: documents_url,
             isHealthy,
             isVaccinated,
             isSterilized,
-            adoptionStatus
+            adoptionStatus,
+            arrivalDate
         };
         return await this.put(body);
     }

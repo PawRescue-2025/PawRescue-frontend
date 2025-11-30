@@ -7,18 +7,20 @@ import { AnimalSize } from "../Enums/AnimalSize";
 import { AdoptionStatus } from "../Enums/AdoptionStatus";
 
 import AnimalViewModel from "../ViewModels/AnimalViewModel";
+import {PostType} from "../Enums/PostType";
 
 const animalVM = new AnimalViewModel();
 
 interface AddAnimalFormProps {
     show: boolean;
+    shelterId: number;
     onClose: () => void;
     onSubmit: () => void;
 }
 
 interface NewAnimalData {
     name: string;
-    species: AnimalSpecies | "";
+    species: string | "";
     breed: string;
     gender: AnimalGender | "";
     age: number | "";
@@ -34,7 +36,21 @@ interface NewAnimalData {
     documents: File[];
 }
 
-const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }) => {
+const animalSizeLabels: { [key in AnimalSize]: string } = {
+    [AnimalSize.Small]: "Маленький",
+    [AnimalSize.Medium]: "Середній",
+    [AnimalSize.Large]: "Великий",
+};
+
+const adoptionStatusLabels: { [key in AdoptionStatus]: string } = {
+    [AdoptionStatus.NotAvailableForAdoption]: "Недоступно до всиновлення",
+    [AdoptionStatus.AvailableForAdoption]: "Доступно до всиновлення",
+    [AdoptionStatus.Adopted]: "Всиновлено",
+    [AdoptionStatus.CurrentlyFostered]: "На перетримці",
+};
+
+
+const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, shelterId, onClose, onSubmit }) => {
     const [newAnimal, setNewAnimal] = useState<NewAnimalData>({
         name: "",
         species: "",
@@ -59,7 +75,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
         e.preventDefault();
 
         try {
-            const shelterId = Number(localStorage.getItem("shelterId"));
+            console.log(newAnimal);
 
             await animalVM.addAnimal(
                 shelterId,
@@ -74,7 +90,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                 newAnimal.isVaccinated,
                 newAnimal.isSterilized,
                 newAnimal.adoptionStatus as AdoptionStatus,
-                new Date(newAnimal.arrivalDate),
+                new Date(),
                 newAnimal.description,
                 newAnimal.photos,
                 newAnimal.documents
@@ -251,6 +267,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                             type="number"
                             className="form-control input-glass"
                             value={newAnimal.age}
+                            min = {0}
                             onChange={(e) => setNewAnimal({ ...newAnimal, age: Number(e.target.value) })}
                             required
                         />
@@ -263,6 +280,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                             type="number"
                             className="form-control input-glass"
                             value={newAnimal.weight}
+                            min = {0}
                             onChange={(e) => setNewAnimal({ ...newAnimal, weight: Number(e.target.value) })}
                             required
                         />
@@ -284,14 +302,14 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                                 .filter(([_, v]) => typeof v === "number")
                                 .map(([label, value]) => (
                                     <option key={value} value={value}>
-                                        {label}
+                                        {animalSizeLabels[value as AnimalSize]}
                                     </option>
                                 ))}
                         </select>
                     </div>
 
                     {/* ARRIVAL */}
-                    <div className="mb-3">
+                    {/*<div className="mb-3">
                         <label>Дата прибуття</label>
                         <input
                             type="date"
@@ -300,7 +318,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                             onChange={(e) => setNewAnimal({ ...newAnimal, arrivalDate: e.target.value })}
                             required
                         />
-                    </div>
+                    </div>*/}
 
                     {/* DESCRIPTION */}
                     <div className="mb-3">
@@ -354,7 +372,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                             checked={newAnimal.isHealthy}
                             onChange={(e) => setNewAnimal({ ...newAnimal, isHealthy: e.target.checked })}
                         />
-                        <label className="form-check-label">Здорова</label>
+                        <label className="form-check-label">Здорова/ий</label>
                     </div>
 
                     <div className="mb-3 form-check">
@@ -364,7 +382,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                             checked={newAnimal.isVaccinated}
                             onChange={(e) => setNewAnimal({ ...newAnimal, isVaccinated: e.target.checked })}
                         />
-                        <label className="form-check-label">Вакцинована</label>
+                        <label className="form-check-label">Вакцинована/ий</label>
                     </div>
 
                     <div className="mb-3 form-check">
@@ -374,7 +392,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                             checked={newAnimal.isSterilized}
                             onChange={(e) => setNewAnimal({ ...newAnimal, isSterilized: e.target.checked })}
                         />
-                        <label className="form-check-label">Стерилізована/кастрована</label>
+                        <label className="form-check-label">Стерилізована/кастрований</label>
                     </div>
 
                     {/* ADOPTION STATUS */}
@@ -395,7 +413,7 @@ const AddAnimalForm: React.FC<AddAnimalFormProps> = ({ show, onClose, onSubmit }
                                 .filter(([_, v]) => typeof v === "number")
                                 .map(([label, value]) => (
                                     <option key={value} value={value}>
-                                        {label.replace(/([A-Z])/g, " $1")}
+                                        {adoptionStatusLabels[value as AdoptionStatus]}
                                     </option>
                                 ))}
                         </select>
